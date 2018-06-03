@@ -49,7 +49,7 @@ package Bar_Codes is
   -----------------------------------------------------------
   --  Bar_Code: the main type around bar code generation.  --
   --  The rendering of the bars is abstracted.             --
-  --  See functions Bar_Code_SVG or Bar_Code_PDF for       --
+  --  See functions SVG_Bar_Code or PDF_Bar_Code for       --
   --  concrete implementations.                            --
   -----------------------------------------------------------
 
@@ -68,7 +68,7 @@ package Bar_Codes is
   title     : constant String := "Ada Bar Codes";
   version   : constant String := "001, preview 1";
   reference : constant String := "(2018)";
-  web       : constant String := "http://*.sf.net/";
+  web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
 
 private
