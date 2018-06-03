@@ -8,6 +8,17 @@ function SVG_Bar_Code (
 return String
 is
   svg_code : Unbounded_String;
+  type SBC is new Bar_Code with null record;
+  overriding procedure Filled_Rectangle (bc : SBC; shape : Box) is
+  begin
+    svg_code := svg_code &
+      "<rect style=""fill:#000000;""" &
+      " height=""" & "mm""" &
+      " width="""  & "mm""" &
+      " x="""      & "mm""" &
+      " y="""      & "mm""/>";
+  end Filled_Rectangle;
+
 begin
   return
     "<svg height=""" &
@@ -22,4 +33,4 @@ begin
     "    <rect height=""100%"" width=""100%"" style=""fill:#FFFFFF""/>" & ASCII.LF &
     To_String (svg_code) &
     "</svg>";
-end;
+end SVG_Bar_Code;

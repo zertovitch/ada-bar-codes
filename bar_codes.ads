@@ -55,11 +55,10 @@ package Bar_Codes is
 
   type Bar_Code is abstract tagged private;
 
-  procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
-  procedure Draw (bc : Bar_Code; kind : Kind_Of_Code; text : String);
+  procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; bounding : Box; text : String);
 
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
-  procedure Filled_Rectangle (bc : Bar_Code) is abstract;
+  procedure Filled_Rectangle (bc : Bar_Code; shape : Box) is abstract;
 
   --------------------------------------------------------------
   -- Information about this package - e.g. for an "about" box --
