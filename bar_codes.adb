@@ -27,22 +27,23 @@ package body Bar_Codes is
   --
   function Img (x : Real; prec : Positive := Real'Digits) return String is
     s : String (1 .. 20 + prec);
-    na, nb, np : Natural;
+    na : Natural := s'First;
+    nb : Natural := s'Last;
+    np : Natural := 0;
   begin
     RIO.Put (s, x, prec, 0);
-    na := s'First;
-    nb := s'Last;
-    np := 0;
+    --  We will increase na and decrease nb
+    --  to compact the string s (na .. nb);
     for i in s'Range loop
       case s (i) is
-        when '.' => np := i; exit;  --   Find a decimal point
+        when '.' => np := i; exit;    --   Find a decimal point
         when ' ' => na := i + 1;      -- * Trim spaces on left
         when others => null;
       end case;
     end loop;
     if np > 0 then
       while nb > np and then s (nb) = '0' loop
-        nb := nb - 1;                 -- * Remove extra '0's
+        nb := nb - 1;                 -- * Remove extra '0's after decimal point
       end loop;
       if nb = np then
         nb := nb - 1;                 -- * Remove '.' if it is at the end
