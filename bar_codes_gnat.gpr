@@ -20,7 +20,11 @@ project Bar_Codes_GNAT is
          for Source_Dirs use (".");
          for Main use ();
       when others =>
-         for Source_Dirs use (".", "demo");
+         for Source_Dirs use (
+				   ".",      --  Library: Bar_Codes[.*]
+					 "impl",   --  Implementations on formats SVG, PDF, ...
+					 "demo"    --  Demos
+				);
          for Main use (
            "bar_code_demo.adb"    --  Demos
          );
