@@ -60,6 +60,14 @@ package Bar_Codes is
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
   procedure Filled_Rectangle (bc : Bar_Code; shape : Box) is abstract;
 
+  ----------------------------------------------------
+  -- Goodies that can be useful for implementations --
+  ----------------------------------------------------
+
+  --  Compact real number image
+
+  function Img (x : Real; prec : Positive := Real'Digits) return String;
+
   --------------------------------------------------------------
   -- Information about this package - e.g. for an "about" box --
   --------------------------------------------------------------
