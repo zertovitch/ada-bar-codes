@@ -57,6 +57,8 @@ package Bar_Codes is
 
   procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; bounding : Box; text : String);
 
+  Cannot_Encode : exception;
+
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
   procedure Filled_Rectangle (bc : Bar_Code; shape : Box) is abstract;
 
