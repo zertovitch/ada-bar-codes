@@ -40,7 +40,12 @@ with System;
 
 package Bar_Codes is
 
-  type Kind_Of_Code is (Code_128);  --  Later: QR, ...
+  type Kind_Of_Code is (
+    --  Code 128 is a 1D bar code that can encode the 128
+    --  first ASCII characters. Standard: ISO/IEC 15417:2007.
+    Code_128
+    --  Later: QR, ...
+  );
 
   type Real is digits System.Max_Digits;
 
