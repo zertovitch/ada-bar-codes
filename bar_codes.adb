@@ -57,4 +57,16 @@ package body Bar_Codes is
     return s (na .. nb);
   end Img;
 
+  function Printable (s : String) return String is
+    t : String := s;
+  begin
+    for i in s'Range loop
+      case s (i) is
+        when ' ' .. '~' => null;
+        when others     => t (i) := '*';
+      end case;
+    end loop;
+    return t;
+  end Printable;
+
 end Bar_Codes;

@@ -190,6 +190,7 @@ procedure Bar_Codes.Draw_Code_128 (bc : Bar_Code; text : String) is
     symbol_width     : constant := 11.0;
     stop_extra_width : constant :=  2.0;  --  Supplemental bar
     --  We need to squeeze the full bar code into the bounding box.
+    --  A "module" is the width of the thinnest bar.
     module_width : constant Real :=
       bc.bounding.width / (Real (code_length) * symbol_width + stop_extra_width);
     x : Real;

@@ -67,8 +67,11 @@ package Bar_Codes is
   ----------------------------------------------------
 
   --  Compact real number image
-
   function Img (x : Real; prec : Positive := Real'Digits) return String;
+
+  --  Display a string (assumed 7-bit), with non-printable
+  --  characters replaced by '*'.
+  function Printable (s : String) return String;
 
   --------------------------------------------------------------
   -- Information about this package - e.g. for an "about" box --

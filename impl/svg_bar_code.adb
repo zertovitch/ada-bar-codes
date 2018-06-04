@@ -34,6 +34,8 @@ begin
     ", " & Bar_Codes.reference &
     " @ " & Bar_Codes.web &
     "  -->" & ASCII.LF &
+    "    <!--  Text to be encoded: [" & Printable (text) &
+    "]  -->" & ASCII.LF &
     --  White rectangle as background
     "    <rect height=""100%"" width=""100%"" style=""fill:#FFFFFF""/>" & ASCII.LF &
     To_String (svg_code) &
