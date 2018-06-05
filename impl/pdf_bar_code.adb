@@ -38,6 +38,7 @@ begin
     "q"   & ASCII.LF &  --  Save the current graphics state
     "0 g" & ASCII.LF &  --  Black
     To_String (pdf_code) &
+    "f"   & ASCII.LF &  --  Paint the rectangles (fill)
     "Q"   & ASCII.LF &  --  Restore the graphics state
     "%  End of bar code" & ASCII.LF;
 end PDF_Bar_Code;
