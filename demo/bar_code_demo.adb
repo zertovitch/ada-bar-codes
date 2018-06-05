@@ -27,7 +27,11 @@ begin
   --
   Create (pdf, Out_File, "bar_code_pdf.txt");
   Put_Line (pdf,
-    PDF_Bar_Code (Code_128, (0.0, 0.0, 57.0, 23.0), "Hello World!")
+    PDF_Bar_Code (
+      Code_128,
+      (100.0, 200.0, 600.0, 200.0),
+      "Hello from " & Bar_Codes.title & " ( " & Bar_Codes.web & " ) !"
+    )
   );
   Close (pdf);
 end Bar_Code_Demo;

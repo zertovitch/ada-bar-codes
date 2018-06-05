@@ -198,7 +198,7 @@ procedure Bar_Codes.Draw_Code_128 (bc : Bar_Code; text : String) is
     begin
       Filled_Rectangle (
         Bar_Code'Class (bc),  --  Will use the concrete child method for displaying a rectangle
-          (left   => x + Real (offset) * module_width,
+          (left   => bc.bounding.left + x + Real (offset) * module_width,
            bottom => bc.bounding.bottom,
            width  => Real (width) * module_width,
            height => bc.bounding.height)
