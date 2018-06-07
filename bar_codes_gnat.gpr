@@ -25,7 +25,7 @@ project Bar_Codes_GNAT is
            "demo"    --  Demos
          );
          for Main use (
-           "bar_code_demo.adb"    --  Demos
+           "bar_codes_demo.adb"    --  Demos
          );
    end case;
    for Exec_Dir use ".";

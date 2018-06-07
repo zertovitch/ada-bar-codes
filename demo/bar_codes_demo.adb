@@ -1,15 +1,15 @@
---  Ada Bar Code Demo (ABCD :-) )
+--  Ada Bar Codes Demo (ABCD :-) )
 
 with Bar_Codes;                         use Bar_Codes;
 
 with Ada.Text_IO;                       use Ada.Text_IO;
 
-procedure Bar_Code_Demo is
+procedure Bar_Codes_Demo is
   svg, pdf : File_Type;
   hello : constant String := "Hello from " & Bar_Codes.title & " ( " & Bar_Codes.web & " ) !";
 begin
   --
-  --  SVG demo
+  --  SVG demo. The resulting file (bar_code.svg) can be viewed directly in a Web browser.
   --
   Create (svg, Out_File, "bar_code.svg");
   Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
@@ -25,4 +25,4 @@ begin
   Create (pdf, Out_File, "bar_code_pdf.txt");
   Put_Line (pdf, PDF_Bar_Code (Code_128, (100.0, 200.0, 600.0, 200.0), hello));
   Close (pdf);
-end Bar_Code_Demo;
+end Bar_Codes_Demo;

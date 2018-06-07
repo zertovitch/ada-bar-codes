@@ -1,0 +1,64 @@
+Intro to Ada Bar Codes
+======================
+
+The project Ada Bar Codes provides a package for generating
+various types of bar codes on different output formats,
+such as PDF or SVG.
+
+The creation of a bar code is as simple as this small procedure:
+
+  with Bar_Codes; use Bar_Codes;
+  with Ada.Text_IO; use Ada.Text_IO;
+
+  procedure Small_demo is 
+    svg : File_Type;
+  begin 
+    Create (svg, Out_File, "bar_code.svg");
+    Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
+    Put_Line (svg, SVG_Bar_Code (Code_128, (0.0, 0.0, 57.0, 23.0), "mm", "Hello"));
+    Close (svg);
+  end;
+
+
+Contents
+========
+
+  Ada Bar Codes
+  =============
+
+  - bar_codes.ads        : package specification
+  - bar_codes.adb        : package body
+  - bar_codes-*          : private children packages (needed but not relevant for users)
+  - bar_codes_demo.adb   : demo procedure
+  - bar_codes_gnat.gpr   : project file for the AdaCore GNAT compiler
+  - bar_codes_oa.prj     : project file for the PTC ObjectAda compiler
+  - ada_bar_codes.txt    : this file
+
+Warning & legal
+===============
+There is NO WARRANTY in this software. Read copyright notice in bar_codes.ads.
+
+Portability
+===========
+This software can be compiled for any target machine, and with any compiler
+for Ada 2005 or later language versions.
+
+How to build Ada Bar Codes and its demo
+=======================================
+Here is how to build with GNAT/GCC:
+
+    - type "gprbuild -p -P bar_codes_gnat" in the command line
+or
+    - open the bar_codes_gnat.gpr file (will launch the GNAT Programming Studio (GPS)),
+      press F4 (Build)
+
+Here is how to build with ObjectAda (tested with v.9.2):
+    - open the bar_codes_oa.prj file, press F7 (Build)
+
+As a result there is a bar_codes_demo[.exe] executable.
+  
+--
+Enjoy!
+
+Gautier de Montmollin
+gautier.de.montmollin, at: gmail dot com.
