@@ -7,24 +7,23 @@ project Bar_Codes_GNAT is
    type Build_Mode_Type is
       ("Debug", 
 			 "Fast",
-       --  Check_95 mode is for checking that the *library* is strictly
-       --  Ada-95-compliant, for being compiled by the broadest set of compilers.
-       --  The demos, tools and tests may use some Ada 2005 & 2012 features.
-       "Check_95",
+       --  Check_2005 mode is for checking that the *library* is strictly
+       --  Ada-2005-compliant, for being compiled by the broadest set of compilers.
+       --  The demos, tools and tests may use some Ada 2012 features.
+       "Check_2005",
        --  Check_Style mode is for checking that the source code is pretty.
        "Check_Style"  
 			 );
    Build_Mode : Build_Mode_Type := external ("Build_Mode", "Debug");
    case Build_Mode is
-      when "Check_95" =>
+      when "Check_2005" =>
          for Source_Dirs use (".");
          for Main use ();
       when others =>
          for Source_Dirs use (
-				   ".",      --  Library: Bar_Codes[.*]
-					 "impl",   --  Implementations on formats SVG, PDF, ...
-					 "demo"    --  Demos
-				);
+           ".",      --  Library: Bar_Codes[.*]
+           "demo"    --  Demos
+         );
          for Main use (
            "bar_code_demo.adb"    --  Demos
          );
@@ -33,7 +32,7 @@ project Bar_Codes_GNAT is
 
    case Build_Mode is
 
-      when "Debug" | "Check_95" | "Check_Style" =>
+      when "Debug" | "Check_2005" | "Check_Style" =>
          for Object_Dir use "obj_debug";
 
       when "Fast" =>
@@ -44,8 +43,8 @@ project Bar_Codes_GNAT is
 
       case Build_Mode is
 
-         when "Check_95" => for Default_Switches ("ada") use (
-              "-gnat95", "-gnatwa",
+         when "Check_2005" => for Default_Switches ("ada") use (
+              "-gnat05", "-gnatwa",
 							"-gnato", "-gnatVa"
               );
 
