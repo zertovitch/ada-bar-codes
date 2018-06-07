@@ -12,23 +12,25 @@ procedure Bar_Codes.Draw_Code_128 (bc : Bar_Code; text : String) is
     type Code_128_subcode is (undefined, A, B, C);
     subcode          : Code_128_subcode := undefined;
     checksum         : Natural := 0;
+    --
     procedure Add_symbol (symbol : Code_Range) is
     begin
       checksum := checksum + symbol * Integer'Max (1, code_length);
       code_length := code_length + 1;
       code (code_length) := symbol;
-    end;
+    end Add_symbol;
     --
-    procedure Switch_to (new_subcode : Code_128_subcode) is
+    subtype Defined_subcode is Code_128_subcode range A .. C;
+    --
+    procedure Switch_to (new_subcode : Defined_subcode) is
     begin
       subcode := new_subcode;
       case new_subcode is
-        when undefined => null;
         when A => Add_symbol (103);
         when B => Add_symbol (104);
         when C => Add_symbol (105);
       end case;
-    end;
+    end Switch_to;
   begin
     for i in text'Range loop
       if text (i) > ASCII.DEL then
