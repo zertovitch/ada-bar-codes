@@ -17,7 +17,7 @@ small procedure:
   begin 
     Create (svg, Out_File, "bar_code.svg");
     Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
-    Put_Line (svg, SVG_Bar_Code (Code_128, (0.0, 0.0, 57.0, 23.0), "mm", "Hello"));
+    Put_Line (svg, SVG_Bar_Code (Code_128, 57.0, 23.0, "mm", "Hello"));
     Close (svg);
   end;
 

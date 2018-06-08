@@ -16,7 +16,7 @@ begin
   Put_Line (svg, "<!DOCTYPE svg");
   Put_Line (svg, "  PUBLIC '-//W3C//DTD SVG 1.1//EN'");
   Put_Line (svg, "  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>");
-  Put_Line (svg, SVG_Bar_Code (Code_128, (0.0, 0.0, 57.0, 23.0), "mm", hello));
+  Put_Line (svg, SVG_Bar_Code (Code_128, 57.0, 23.0, "mm", hello));
   Close (svg);
   --
   --  PDF snippet to be included into a PDF document.

@@ -69,10 +69,10 @@ package Bar_Codes is
   --  The SVG_Bar_Code function produces a SVG (Scalable Vector Graphics) object.
 
   function SVG_Bar_Code (
-    kind     : Kind_Of_Code;
-    bounding : Box;           --  Box in which the bar code should fit
-    unit     : String;        --  Length unit, for instance "mm" for millimeter
-    text     : String         --  Text to encode
+    kind          : Kind_Of_Code;
+    width, height : Real;
+    unit          : String;        --  Length unit, for instance "mm" for millimeter
+    text          : String         --  Text to encode
   )
   return String;
 
