@@ -12,7 +12,6 @@ package body Bar_Codes is
   )
   return String
   is
-    use Bar_Codes;
     pdf_code : Unbounded_String;
     --
     type PBC is new Bar_Code with null record;
@@ -56,7 +55,6 @@ package body Bar_Codes is
   )
   return String
   is
-    use Bar_Codes;
     svg_code : Unbounded_String;
     --
     type SBC is new Bar_Code with null record;
