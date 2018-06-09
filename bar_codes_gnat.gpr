@@ -22,10 +22,12 @@ project Bar_Codes_GNAT is
       when others =>
          for Source_Dirs use (
            ".",      --  Library: Bar_Codes[.*]
-           "demo"    --  Demos
+           "demo",   --  Demos
+           "test"    --  Tests
          );
          for Main use (
-           "bar_codes_demo.adb"    --  Demos
+           "bar_codes_demo.adb",   --  Demos
+           "bar_codes_test.adb"    --  Tests
          );
    end case;
    for Exec_Dir use ".";
