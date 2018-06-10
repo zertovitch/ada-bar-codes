@@ -83,7 +83,7 @@ package body Bar_Codes.Encode_Code_128 is
     return code (1 .. code_length);
   end Compose_code;
 
-  procedure Draw (bc : Bar_Code; text : String) is
+  procedure Draw (bc : in out Bar_Code; text : String) is
     code : constant Sequence := Compose_code (text);
     --
     type Width_sequence is array (1 .. 5) of Positive;
@@ -198,26 +198,27 @@ package body Bar_Codes.Encode_Code_128 is
         105 => (2, 1, 1, 2, 3),
         106 => (2, 3, 3, 1, 1)
       );
-    symbol_width     : constant := 11.0;
-    stop_extra_width : constant :=  2.0;  --  Supplemental bar
-    --  We need to squeeze the full bar code into the bounding box.
-    --  A "module" is the width of the thinnest bar.
-    module_width : constant Real :=
-      bc.bounding.width / (Real (code'Length) * symbol_width + stop_extra_width);
-    x : Real;
+    symbol_width     : constant := 11;
+    stop_extra_width : constant :=  2;  --  Supplemental bar
+    x : Natural;
+    --
     procedure Bar (offset, width : Natural) is
     begin
       Filled_Rectangle (
         Bar_Code'Class (bc),  --  Will use the concrete child method for displaying a rectangle
-          (left   => bc.bounding.left + x + Real (offset) * module_width,
-           bottom => bc.bounding.bottom,
-           width  => Real (width) * module_width,
-           height => bc.bounding.height)
+          (left   => x + offset,
+           bottom => 0,
+           width  => width,
+           height => 1)
       );
     end Bar;
   begin
+    --  (For vector graphics) We need to squeeze the full bar code into the bounding box.
+    --  A "module" is the width of the thinnest bar.
+    bc.module_width  := bc.bounding.width / Real (code'Length * symbol_width + stop_extra_width);
+    bc.module_height := bc.bounding.height;  --  This is an 1D code, any bar takes the full height
     for i in code'Range loop
-      x := Real (i - 1) * symbol_width * module_width;
+      x := (i - 1) * symbol_width;
       declare
         ws : constant Width_sequence := width (code (i));
       begin
@@ -228,8 +229,16 @@ package body Bar_Codes.Encode_Code_128 is
     end loop;
     --  Extra bar after the Stop symbol; this gives the Reverse Stop symbol
     --  when the bar code is scanned turned 180°.
-    x := Real (code'Length) * symbol_width * module_width;
+    x := code'Length * symbol_width;
     Bar (0, 2);
   end Draw;
+
+  function Fitting (text : String) return Module_Box is
+    symbol_width     : constant := 11;
+    stop_extra_width : constant :=  2;  --  Supplemental bar
+    code : constant Sequence := Compose_code (text);
+  begin
+    return (0, 0, code'Length * symbol_width + stop_extra_width, 1);
+  end Fitting;
 
 end Bar_Codes.Encode_Code_128;

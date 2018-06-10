@@ -87,10 +87,30 @@ package Bar_Codes is
 
   type Bar_Code is abstract tagged private;
 
-  procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; bounding : Box; text : String);
+  --  Set_Bounding_Box is useful only for vector graphics such as PDF or SVG (see those
+  --  implementations to see why).
+  --
+  --  For raster graphics, the shape variable can be used for pixel coordinates
+  --  (or eventually integer multiples; if not multiples are not integral,
+  --  the bar codes will be wrong).
+  --
+  procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
+
+  procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; text : String);
+
+  --  A "module" is the thinnest bar (1D), or the smallest box (2D).
+  --  The coordinates of a Module_Box are in "module" units.
+  --  This is practical for raster graphics (typically on a screen) since the
+  --  display can be done on a multiple of those units without rounding errors.
+  type Module_Box is record left, bottom, width, height : Natural; end record;
+
+  --  The Fitting function will return the exact box needed to fit the bar code
+  --  for a given text. Fitting.left = Fitting.bottom = 0. For 1D codes Fitting.height = 1.
+  --
+  function Fitting (kind : Kind_Of_Code; text : String) return Module_Box;
 
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
-  procedure Filled_Rectangle (bc : Bar_Code; shape : Box) is abstract;
+  procedure Filled_Rectangle (bc : Bar_Code; shape : Module_Box) is abstract;
 
   Cannot_Encode : exception;
 
@@ -118,7 +138,9 @@ package Bar_Codes is
 private
 
   type Bar_Code is abstract tagged record
-    bounding : Box;
+    bounding      : Box := (0.0, 0.0, 1.0, 1.0);
+    module_width  : Real;
+    module_height : Real;
   end record;
 
 end Bar_Codes;
