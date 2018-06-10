@@ -64,8 +64,8 @@ package body Bar_Codes is
         "    <rect style=""fill:#000000;""" &
         " x="""      & Img (bc.module_width  * Real (shape.left))   & unit & """" &
         " y="""      & Img (bc.module_height * Real (shape.bottom)) & unit & """" &
-        " height=""" & Img (bc.module_height * Real (shape.height)) & unit & """" &
-        " width="""  & Img (bc.module_width  * Real (shape.width))  & unit & """/>" & ASCII.LF;
+        " width="""  & Img (bc.module_width  * Real (shape.width))  & unit & """" &
+        " height=""" & Img (bc.module_height * Real (shape.height)) & unit & """/>" & ASCII.LF;
     end Filled_Rectangle;
     --
     bc : SVG_BC;

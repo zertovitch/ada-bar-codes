@@ -83,12 +83,18 @@ package body Bar_Codes.Encode_Code_128 is
     return code (1 .. code_length);
   end Compose_code;
 
+  --  Here begins the graphics part.
+  --  Each symbol drawn as a succession of bar, space, bar, space, bar, space.
+
+  symbol_width     : constant := 11;  --  Each symbol has 3 bars and takes 11 "modules" in total.
+  stop_extra_width : constant :=  2;  --  Supplemental bar after stop symbol.
+
   procedure Draw (bc : in out Bar_Code; text : String) is
     code : constant Sequence := Compose_code (text);
     --
     type Width_sequence is array (1 .. 5) of Positive;
     width : constant array (Code_Range) of Width_sequence :=
-      --  These are the widths for:  bar, space, bar, space, bar
+      --  These are the widths for:  bar, space, bar, space, bar (last space width is implicit).
       (
         0 => (2, 1, 2, 2, 2),
         1 => (2, 2, 2, 1, 2),
@@ -198,8 +204,6 @@ package body Bar_Codes.Encode_Code_128 is
         105 => (2, 1, 1, 2, 3),
         106 => (2, 3, 3, 1, 1)
       );
-    symbol_width     : constant := 11;
-    stop_extra_width : constant :=  2;  --  Supplemental bar
     x : Natural;
     --
     procedure Bar (offset, width : Natural) is
@@ -234,8 +238,6 @@ package body Bar_Codes.Encode_Code_128 is
   end Draw;
 
   function Fitting (text : String) return Module_Box is
-    symbol_width     : constant := 11;
-    stop_extra_width : constant :=  2;  --  Supplemental bar
     code : constant Sequence := Compose_code (text);
   begin
     return (0, 0, code'Length * symbol_width + stop_extra_width, 1);

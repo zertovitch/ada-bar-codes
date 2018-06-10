@@ -57,6 +57,14 @@ Here is how to build with ObjectAda (tested with v.9.2):
 
 As a result there is a bar_codes_demo[.exe] executable.
   
+Thanks to...
+============
+
+Giuseppe Cannone, for the inspiration and advice.
+
+Jeffrey R. Carter, for the first implementation on raster graphics and as a Web service:
+   https://github.com/jrcarter/Gnoga_Bar_Codes
+
 --
 Enjoy!
 
