@@ -1,4 +1,4 @@
-with Bar_Codes.Draw_Code_128;
+with Bar_Codes.Encode_Code_128;
 
 with Ada.Strings.Unbounded;             use Ada.Strings.Unbounded;
 with Ada.Text_IO;
@@ -100,7 +100,7 @@ package body Bar_Codes is
     bc.bounding := bounding;
     case kind is
       when Code_128 =>
-        Bar_Codes.Draw_Code_128 (bc, text);
+        Bar_Codes.Encode_Code_128.Draw (bc, text);
     end case;
   end Draw;
 
