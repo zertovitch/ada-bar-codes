@@ -5,7 +5,7 @@ with Bar_Codes;                         use Bar_Codes;
 with Ada.Text_IO;                       use Ada.Text_IO;
 
 procedure Bar_Codes_Demo is
-  svg, pdf : File_Type;
+  svg, pdf, pbm : File_Type;
   hello : constant String := "Hello from " & Bar_Codes.title & " ( " & Bar_Codes.web & " ) !";
 begin
   --
@@ -25,4 +25,11 @@ begin
   Create (pdf, Out_File, "bar_code_pdf.txt");
   Put_Line (pdf, PDF_Bar_Code (Code_128, (100.0, 200.0, 600.0, 200.0), hello));
   Close (pdf);
+  --
+  --  PBM image, to demonstrate an output to raster graphics - can be
+  --  anything with pixels, like a screen.
+  --
+  Create (pbm, Out_File, "bar_code.pbm");
+  Put_Line (pbm, PBM_Bar_Code (Code_128, 2, 100, hello));
+  Close (pbm);
 end Bar_Codes_Demo;

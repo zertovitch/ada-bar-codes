@@ -3,7 +3,7 @@
 --  BAR_CODES - A package for displaying bar codes (1D or 2D).
 --                  Project name: Ada Bar Codes.
 --
---  Pure Ada 95 code, 100% portable: OS-, CPU- and compiler- independent.
+--  Pure Ada 2005 code, 100% portable: OS-, CPU- and compiler- independent.
 --
 --  Version / date / download info: see the version, reference, web strings
 --    defined at the end of the public part of this package.
@@ -51,14 +51,17 @@ package Bar_Codes is
 
   type Box is record left, bottom, width, height : Real; end record;
 
-  --------------------------------------------------------------
-  --  Ready-to-use implementations of the bar code generator  --
-  --------------------------------------------------------------
+  ---------------------------------------------------------------------------
+  --  Ready-to-use implementations of the bar code generator:              --
+  --    - PDF_Bar_Code: PDF vector graphics for PDF documents              --
+  --    - SVG_Bar_Code: SVG vector graphics for Web contents               --
+  --    - PBM_Bar_Code: PBM bitmap image as an example of raster graphics  --
+  ---------------------------------------------------------------------------
 
   --  The PDF_Bar_Code function produces a PDF (Portable Document Format) snippet
   --  to be included into a PDF document. For instance, use Insert_Graphics_PDF_Code
   --  of package PDF_Out (project Ada PDF Writer, http://apdf.sf.net/ ).
-
+  --
   function PDF_Bar_Code (
     kind     : Kind_Of_Code;
     bounding : Box;           --  Box in which the bar code should fit
@@ -67,32 +70,37 @@ package Bar_Codes is
   return String;
 
   --  The SVG_Bar_Code function produces a SVG (Scalable Vector Graphics) object.
-
+  --
   function SVG_Bar_Code (
     kind          : Kind_Of_Code;
-    width, height : Real;
+    width, height : Real;          --  (0,0)-based box in which the bar code should fit
     unit          : String;        --  Length unit, for instance "mm" for millimeter
     text          : String         --  Text to encode
   )
   return String;
 
-  ------------------------------------------------------------
-  --  Here is what you need to implement the bar code on    --
-  --  another device than PDF or SVG.                       --
-  --  Bar_Code: the main type around bar code generation.   --
-  --  The rendering of the bars is abstracted.              --
-  --  See functions SVG_Bar_Code or PDF_Bar_Code above for  --
-  --  concrete implementations.                             --
-  ------------------------------------------------------------
+  --  The PBM_Bar_Code function produces a PBM (Portable BitMap) image.
+  --
+  function PBM_Bar_Code (
+    kind             : Kind_Of_Code;
+    scale_x, scale_y : Positive;
+    text             : String         --  Text to encode
+  )
+  return String;
+
+  -------------------------------------------------------------
+  --  Here is what you need to implement the bar code on     --
+  --  another device than PDF, SVG or PBM.                   --
+  --  Bar_Code is the main type around bar code generation.  --
+  --  The rendering of the bars is abstracted.               --
+  --  See functions SVG_Bar_Code, PDF_Bar_Code, or           --
+  --  PBM_Bar_Code above for concrete implementations.       --
+  -------------------------------------------------------------
 
   type Bar_Code is abstract tagged private;
 
   --  Set_Bounding_Box is useful only for vector graphics such as PDF or SVG (see those
   --  implementations to see why).
-  --
-  --  For raster graphics, the shape variable can be used for pixel coordinates
-  --  (or eventually integer multiples; if not multiples are not integral,
-  --  the bar codes will be wrong).
   --
   procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
 
@@ -105,11 +113,16 @@ package Bar_Codes is
   type Module_Box is record left, bottom, width, height : Natural; end record;
 
   --  The Fitting function will return the exact box needed to fit the bar code
-  --  for a given text. Fitting.left = Fitting.bottom = 0. For 1D codes Fitting.height = 1.
+  --  for a given text. Fitting.left = Fitting.bottom = 0.
+  --  For 1D codes Fitting.height = 1.
   --
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box;
 
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
+  --  For raster graphics, the shape variable can be used for pixel coordinates
+  --  or eventually integer multiples of them. If multiples are not integral,
+  --  the bar codes will be wrong.
+  --
   procedure Filled_Rectangle (bc : Bar_Code; shape : Module_Box) is abstract;
 
   Cannot_Encode : exception;

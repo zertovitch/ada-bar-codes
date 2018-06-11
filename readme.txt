@@ -3,7 +3,7 @@ Ada Bar Codes
 
 The project Ada Bar Codes provides a package for generating
 various types of bar codes on different output formats,
-such as PDF or SVG.
+such as PDF, SVG or bitmaps.
 
 The creation of a bar code is as simple as this
 small procedure:
