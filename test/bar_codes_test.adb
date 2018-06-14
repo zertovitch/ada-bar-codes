@@ -3,29 +3,40 @@ with Bar_Codes;                         use Bar_Codes;
 with Ada.Text_IO;                       use Ada.Text_IO;
 
 procedure Bar_Codes_Test is
-  pbm : File_Type;
+  --
+  procedure Spit (kind : Kind_Of_Code; file_name, text : String) is
+    pbm : File_Type;
+  begin
+    if file_name = "" then
+      Create (pbm, Out_File, text & ".pbm");
+    else
+      Create (pbm, Out_File, file_name & ".pbm");
+    end if;
+    if kind in Code_1D then
+      Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
+    else
+      Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+    end if;
+    Close (pbm);
+  end Spit;
+  --
   procedure Test_128 is
     chunks : constant := 2;
     c : Character := ASCII.DEL;
     msg : String (1 .. 128 / chunks);
   begin
     for chunk in 1 .. chunks loop
-      Create (pbm, Out_File, "test code 128" & Integer'Image (chunk) & ".pbm");
       for i in msg'Range loop
         msg (i) := c;
         if c > ASCII.NUL then
           c := Character'Pred (c);
         end if;
       end loop;
-      Put_Line (pbm, PBM_Bar_Code (Code_128, 2, 50, msg));
-      Close (pbm);
+      Spit (Code_128, "test code 128" & Integer'Image (chunk), msg);
     end loop;
-    Create (pbm, Out_File, "vn1.pbm");
-    Put_Line (pbm, PBM_Bar_Code (Code_128, 2, 50, "0520"));
-    Close (pbm);
-    Create (pbm, Out_File, "vn2.pbm");
-    Put_Line (pbm, PBM_Bar_Code (Code_128, 2, 50, "993512176004535560"));
-    Close (pbm);
+    Spit (Code_128, "vn1", "0520");
+    Spit (Code_128, "vn2", "993512176004535560");
+    Spit (Code_128, "", "12345abc1234abc1234567a123bcdef12345");
   end Test_128;
 begin
   Test_128;

@@ -1,5 +1,4 @@
---  !! TO DO: Code 128-C (double digits);
---  !! TO DO: Find optimal code
+--  Nice to have: find optimal code.
 
 package body Bar_Codes.Encode_Code_128 is
 
@@ -28,6 +27,8 @@ package body Bar_Codes.Encode_Code_128 is
     --
     subtype Defined_subcode is Code_128_subcode range A .. C;
     --
+    first_digit : Boolean;  --  First digit in a pair of digits for subcode C
+    --
     procedure Switch_to (new_subcode : Defined_subcode) is
     begin
       if subcode = undefined then
@@ -44,8 +45,14 @@ package body Bar_Codes.Encode_Code_128 is
           when C => Add_symbol (099);
         end case;
       end if;
+      if new_subcode = C then
+        first_digit := True;
+      end if;
       subcode := new_subcode;
     end Switch_to;
+    --
+    four_digits : Boolean;
+    digit_buffer, digit : Natural;
   begin
     for i in text'Range loop
       if text (i) > ASCII.DEL then
@@ -62,6 +69,29 @@ package body Bar_Codes.Encode_Code_128 is
         when Character'Val (96) .. ASCII.DEL =>
           if subcode /= B then
             Switch_to (B);
+          end if;
+        when '0' .. '9' =>
+          if subcode = C then
+            --  If text (i) is meant to be the first digit of a pair,
+            --  ensure there is a second digit after.
+            if first_digit then
+              if i = text'Last or else text (i + 1) not in '0' .. '9' then
+                Switch_to (B);  --  We need to encode this digit with subcode A or B
+              end if;
+            end if;
+          else
+            if i + 3 <= text'Last then
+              four_digits := True;
+              for j in i + 1 .. i + 3 loop
+                four_digits := four_digits and text (j) in '0' .. '9';
+              end loop;
+              if four_digits then
+                Switch_to (C);
+              end if;
+            end if;
+            if subcode = undefined then
+              Switch_to (B);
+            end if;
           end if;
         when others =>
           --  A or B is good.
@@ -81,10 +111,16 @@ package body Bar_Codes.Encode_Code_128 is
         when B =>
           Add_symbol (Character'Pos (text (i)) - 32);
         when C =>
-          raise Program_Error;  --  Not yet implemented.
+          digit := Character'Pos (text (i)) - Character'Pos ('0');
+          if first_digit then
+            digit_buffer := digit;
+          else
+            Add_symbol (10 * digit_buffer + digit);
+          end if;
+          first_digit := not first_digit;
       end case;
     end loop;
-    --  Check symbol
+    --  Checksum symbol
     Add_symbol (checksum mod 103);
     --  Stop symbol
     Add_symbol (106);

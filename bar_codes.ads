@@ -47,6 +47,8 @@ package Bar_Codes is
     --  Later: QR, ...
   );
 
+  subtype Code_1D is Kind_Of_Code range Code_128 .. Code_128;
+
   type Real is digits System.Max_Digits;
 
   type Box is record left, bottom, width, height : Real; end record;
