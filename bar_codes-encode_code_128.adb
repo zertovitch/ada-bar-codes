@@ -30,12 +30,21 @@ package body Bar_Codes.Encode_Code_128 is
     --
     procedure Switch_to (new_subcode : Defined_subcode) is
     begin
+      if subcode = undefined then
+        --  Start code A/B/C:
+        case new_subcode is
+          when A => Add_symbol (103);
+          when B => Add_symbol (104);
+          when C => Add_symbol (105);
+        end case;
+      else
+        case new_subcode is
+          when A => Add_symbol (101);
+          when B => Add_symbol (100);
+          when C => Add_symbol (099);
+        end case;
+      end if;
       subcode := new_subcode;
-      case new_subcode is
-        when A => Add_symbol (103);
-        when B => Add_symbol (104);
-        when C => Add_symbol (105);
-      end case;
     end Switch_to;
   begin
     for i in text'Range loop
