@@ -1,0 +1,2 @@
+del *.pbm
+del *.dib

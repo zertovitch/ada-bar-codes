@@ -44,7 +44,7 @@ procedure Bar_Codes_Test is
     Spit (Code_128, "vn2", "993512176004535560");
     Spit (Code_128, "", "12345abc1234abc1234567a123bcdef12345");
     Reset (gen, 1);
-    for iter in 1 .. 10 loop
+    for iter in 1 .. 9 loop
       for i in rnd'Range loop
         rnd (i) := Character'Val (32 + Integer (Random (gen) * 95.0));
       end loop;
@@ -64,6 +64,11 @@ procedure Bar_Codes_Test is
         end if;
       end loop;
       Spit (Code_128, "rnd" & Integer'Image (iter), rnd);
+      --  Digits only (must be all with subcode C):
+      for i in rnd'Range loop
+        rnd (i) := Character'Val (Character'Pos ('0') + Integer (Random (gen) * 9.0));
+      end loop;
+      Spit (Code_128, "rnd digits" & Integer'Image (iter), rnd);
     end loop;
   end Test_128;
 begin
