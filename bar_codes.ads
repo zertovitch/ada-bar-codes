@@ -158,4 +158,12 @@ private
     module_height : Real;
   end record;
 
+  verbosity : Natural := 0;   
+
+  --  Controls diagnostic/debug output during all operations.
+  --
+  --    0: no output
+  --    1: some output
+  --  > 1: more output
+
 end Bar_Codes;
