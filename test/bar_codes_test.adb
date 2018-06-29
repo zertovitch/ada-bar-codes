@@ -15,11 +15,14 @@ procedure Bar_Codes_Test is
     else
       Create (pbm, Out_File, prefix & file_name_part & ".pbm");
     end if;
-    if kind in Code_1D then
-      Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
-    else
-      Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
-    end if;
+    case kind is
+      when Code_1D =>
+        --  1D modules are as high as you wish.
+        Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
+      when Code_2D_Square =>
+        --  Square 2D codes need square modules.
+        Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+    end case;
     Close (pbm);
   end Spit;
   --
@@ -71,7 +74,6 @@ procedure Bar_Codes_Test is
       Spit (Code_128, "rnd digits" & Integer'Image (iter), rnd);
     end loop;
   end Test_128;
-  pragma Unreferenced (Test_128);
   --
   procedure Test_QR is
     blabla : constant String :=
@@ -112,6 +114,6 @@ procedure Bar_Codes_Test is
     end loop;
   end Test_QR;
 begin
-  --  Test_128;
+  Test_128;
   Test_QR;
 end Bar_Codes_Test;

@@ -59,7 +59,7 @@ package Bar_Codes is
   subtype Code_1D is Kind_Of_Code range Code_128 .. Code_128;
   subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
   subtype Code_2D is Code_QR;
-  subtype Code_Square is Code_QR;
+  subtype Code_2D_Square is Code_QR;
 
   type Real is digits System.Max_Digits;
 
