@@ -71,6 +71,47 @@ procedure Bar_Codes_Test is
       Spit (Code_128, "rnd digits" & Integer'Image (iter), rnd);
     end loop;
   end Test_128;
+  pragma Unreferenced (Test_128);
+  --
+  procedure Test_QR is
+    blabla : constant String :=
+      "The Corporate Bullshit Generator " &
+      " *** " &
+      "Short URL (for bookmark and sharing): http://cbsg.sf.net " &
+      " *** " &
+      "A pre-integrated, non-deterministic and high-performance intellect " &
+      "deepens mobility spaces. " &
+      "Offshorings expediently generate our world-class and fast-paced brand image. " &
+      "A segmentation influences the decision makers, while multi-divisional, " &
+      "service-oriented, pipelines quickly streamline evolutions. " &
+      "Above-average next steps incentivise the initiator; nevertheless " &
+      "the enablers orchestrate the adjustments. A continual increase in " &
+      "margins goes hand-in-hand with a measured gain in task efficiency." &
+      " *** " &
+      "The project Ada Bar Codes provides a package for generating " &
+      "various types of bar codes on different output formats," &
+      "such as PDF, SVG or bitmaps." &
+      " *** " &
+      "Zip-Ada is a programming library for dealing with the Zip compressed " &
+      "archive file format. The full sources of Zip-Ada are in Ada, " &
+      "compilable on every compiler and for every system. For more details, " &
+      "read the files zipada.txt and zip.ads from the archive below." &
+      " *** " &
+      "GLOBE_3D stands for GL Object Based Engine for 3D." &
+      "GL stands for Graphics Library, created by SGI. " &
+      "SGI stands for Silicon Graphics, Inc. " &
+      "Short description: GLOBE_3D is a free, open-source," &
+      "real-time 3D Engine written in Ada, based on OpenGL.";
+  begin
+    for c in Code_QR loop
+      Spit (c, "empty", "");
+      Spit (c, "blabla 10",  blabla (1 .. 10));
+      Spit (c, "blabla 100", blabla (1 .. 100));
+      Spit (c, "blabla 500", blabla (1 .. 500));
+      Spit (c, "blabla",     blabla);
+    end loop;
+  end Test_QR;
 begin
-  Test_128;
+  --  Test_128;
+  Test_QR;
 end Bar_Codes_Test;

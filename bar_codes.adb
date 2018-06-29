@@ -1,4 +1,5 @@
 with Bar_Codes.Encode_Code_128;
+with Bar_Codes.Encode_QR;
 
 with Ada.Strings.Unbounded;             use Ada.Strings.Unbounded;
 with Ada.Text_IO;
@@ -63,7 +64,7 @@ package body Bar_Codes is
       svg_code := svg_code &
         "    <rect style=""fill:#000000;""" &
         " x="""      & Img (bc.module_width  * Real (shape.left))   & unit & """" &
-        " y="""      & Img (bc.module_height * Real (shape.bottom)) & unit & """" &
+        " y="""      & Img (height - bc.module_height * Real (shape.bottom + shape.height)) & unit & """" &
         " width="""  & Img (bc.module_width  * Real (shape.width))  & unit & """" &
         " height=""" & Img (bc.module_height * Real (shape.height)) & unit & """/>" & ASCII.LF;
     end Filled_Rectangle;
@@ -120,7 +121,7 @@ package body Bar_Codes is
     bc : PBM_BC;
   begin
     bc.Draw (kind, text);
-    for y in bitmap'Range (2) loop
+    for y in reverse bitmap'Range (2) loop
       for x in bitmap'Range (1) loop
         pbm_code (pbm_i .. pbm_i + 1) := Bit'Image (bitmap (x, y));
         pbm_i := pbm_i + 2;
@@ -155,6 +156,8 @@ package body Bar_Codes is
     case kind is
       when Code_128 =>
         Bar_Codes.Encode_Code_128.Draw (bc, text);
+      when Code_QR =>
+        Bar_Codes.Encode_QR.Draw (bc, text, kind);
     end case;
   end Draw;
 
@@ -163,6 +166,8 @@ package body Bar_Codes is
     case kind is
       when Code_128 =>
         return Bar_Codes.Encode_Code_128.Fitting (text);
+      when Code_QR =>
+        return Bar_Codes.Encode_QR.Fitting (text, kind);
     end case;
   end Fitting;
 

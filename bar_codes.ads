@@ -41,13 +41,25 @@ with System;
 package Bar_Codes is
 
   type Kind_Of_Code is (
-    --  Code 128 is a 1D bar code that can encode the 128
-    --  first ASCII characters. Standard: ISO/IEC 15417:2007.
-    Code_128
-    --  Later: QR, ...
+    --
+    --  Code 128 is a 1D bar code that can encode the first 128 ASCII characters.
+    --  Standard: ISO/IEC 15417:2007.
+    --
+    Code_128,
+    --
+    --  QR Code is a popular 2D bar code.
+    --  Standard: ISO/IEC 18004:2015.
+    --
+    Code_QR_Low,        --  Level L (Low)       7% of codewords can be restored.
+    Code_QR_Medium,     --  Level M (Medium)   15% of codewords can be restored.
+    Code_QR_Quartile,   --  Level Q (Quartile) 25% of codewords can be restored.
+    Code_QR_High        --  Level H (High)     30% of codewords can be restored.
   );
 
   subtype Code_1D is Kind_Of_Code range Code_128 .. Code_128;
+  subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
+  subtype Code_2D is Code_QR;
+  subtype Code_Square is Code_QR;
 
   type Real is digits System.Max_Digits;
 
@@ -145,8 +157,8 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "001";
-  reference : constant String := "16-Jun-2018";
+  version   : constant String := "002 preview 1";
+  reference : constant String := "> 18-Jun-2018";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
 
@@ -158,7 +170,7 @@ private
     module_height : Real;
   end record;
 
-  verbosity : Natural := 0;   
+  verbosity : Natural := 1;
 
   --  Controls diagnostic/debug output during all operations.
   --

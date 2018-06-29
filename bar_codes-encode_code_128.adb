@@ -267,10 +267,11 @@ package body Bar_Codes.Encode_Code_128 is
       );
     end Bar;
   begin
-    --  (For vector graphics) We need to squeeze the full bar code into the bounding box.
-    --  A "module" is the width of the thinnest bar.
+    --  For vector graphics only: we need to squeeze the full 2D code
+    --  into the bounding box. A "module" is the thinnest bar.
     bc.module_width  := bc.bounding.width / Real (code'Length * symbol_width + stop_extra_width);
     bc.module_height := bc.bounding.height;  --  This is an 1D code, any bar takes the full height
+    --
     for i in code'Range loop
       x := (i - 1) * symbol_width;
       declare
