@@ -24,7 +24,8 @@
 --    out of or in connection with the Software or the use or other dealings in the
 --    Software.
 
---  !! De-CamelCase
+--  !! To do: de-CamelCase-ize
+--  !! To do: other places with "!!"...
 
 with Ada.Containers.Vectors;
 with Ada.Text_IO; use Ada.Text_IO;
@@ -116,15 +117,10 @@ package body Bar_Codes.Encode_QR is
   subtype U16 is Unsigned_16;
   subtype U32 is Unsigned_32;
 
-  procedure appendBits (bb : in out Bit_vector; value : U32; number : Natural) is
-    bbi : Bit;
+  procedure appendBits (bb : in out Bit_vector; value : U32; number_of_bits : Natural) is
   begin
-    for pos in reverse 0 .. number - 1 loop
-      bbi := Bit (Shift_Right (value, pos) and 1);
-      bb.Append (bbi);
-      if verbosity > 2 then
-        Put_Line ("appendBits: " & Bit'Image (bbi));
-      end if;
+    for pos in reverse 0 .. number_of_bits - 1 loop
+      bb.Append (Bit (Shift_Right (value, pos) and 1));
     end loop;
   end appendBits;
 
