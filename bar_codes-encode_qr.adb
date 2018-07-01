@@ -245,19 +245,15 @@ package body Bar_Codes.Encode_QR is
   ---------------------------------------------------------------
 
   --  Returns the product of the two given field elements modulo GF(2^8/16#11D#).
-  --  All inputs are valid. This could be implemented as a 256*256 lookup table.
   function finiteFieldMultiply (x, y : U8) return U8 is
-    x32 : constant U32 := U32 (x);
-    y32 : constant U32 := U32 (y);
-    z : U32 := 0;
+    z : U8 := 0;
   begin
     --  Russian peasant multiplication
     for i in reverse 0 .. 7 loop
-      --  Since 16#11D# > U8'Last, we use larger modular integers.
-      z := Shift_Left (z, 1) xor (Shift_Right (z, 7) * 16#11D#);
-      z := z xor (Shift_Right (y32, i) and 1) * x32;
+      z := Shift_Left (z, 1) xor (Shift_Right (z, 7) * 16#1D#);
+      z := z xor (Shift_Right (y, i) and 1) * x;
     end loop;
-    return U8 (z);
+    return z;
   end finiteFieldMultiply;
 
   --  Calculates the Reed-Solomon generator polynomial of the given degree, storing in result[0 : degree].

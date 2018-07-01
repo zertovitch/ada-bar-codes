@@ -46,7 +46,7 @@ procedure Bar_Codes_Demo is
     Close (svg);
     --
     Create (pbm, Out_File, "qr_code.pbm");
-    Put_Line (pbm, PBM_Bar_Code (Code_QR_Low, 1, 1, hello));
+    Put_Line (pbm, PBM_Bar_Code (Code_QR_Low, 3, 3, hello));
     Close (pbm);
   end Demo_QR;
   --
