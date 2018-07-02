@@ -1,5 +1,10 @@
 --  This is a GNAT, GCC or GNAT Programming Studio (GPS) project file
---  for Ada Bar Codes ( http://ada-bar-codes.sf.net/ )
+--  for the Ada Bar Codes project:
+--
+--      home page:     http://ada-bar-codes.sf.net/
+--      project page:  http://sf.net/projects/ada-bar-codes/
+--      mirror:        https://github.com/svn2github/abc
+--
 --  Build me with "gprbuild -p -P bar_codes_gnat", or "gnatmake -p -P bar_codes_gnat",
 --  or open me with GPS
 --
@@ -50,7 +55,7 @@ project Bar_Codes_GNAT is
       case Build_Mode is
 
          when "Check_2005" => for Default_Switches ("ada") use (
-              "-gnat05", "-gnatwa",
+              "-gnat05", "-gnatwaC",
               "-gnato", "-gnatVa"
               );
 
@@ -61,14 +66,14 @@ project Bar_Codes_GNAT is
               "-gnatyxtc",    --  Style: check x:no extra parens, t:token separation rules, c:comment format (two spaces)
               "-gnaty2",      --  Style: check indentation
               "-gnatyO",      --  Style: check O:check overriding indicators
-              "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatwa", "-gnatVa", "-gnatec=" & project'Project_Dir & "gnat/debug.pra");
+              "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatwaC", "-gnatVa", "-gnatec=" & project'Project_Dir & "gnat/debug.pra");
 
          when "Debug" =>
             for Default_Switches ("ada") use (
-              "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatwa", "-gnatVa", "-gnatec=" & project'Project_Dir & "gnat/debug.pra");
+              "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatwaC", "-gnatVa", "-gnatec=" & project'Project_Dir & "gnat/debug.pra");
 
          when "Fast" =>
-            for Default_Switches ("ada") use ("-O2", "-gnatn", "-gnatp", "-gnatwa", "-fno-strict-aliasing", "-funroll-loops", "-fpeel-loops", "-ftracer", "-funswitch-loops", "-fweb", "-frename-registers");
+            for Default_Switches ("ada") use ("-O2", "-gnatn", "-gnatp", "-gnatwaC", "-fno-strict-aliasing", "-funroll-loops", "-fpeel-loops", "-ftracer", "-funswitch-loops", "-fweb", "-frename-registers");
       end case;
    end Compiler;
    
@@ -81,9 +86,5 @@ project Bar_Codes_GNAT is
       --    jobs is the number of core processors on the platform."
       for Default_Switches ("ada") use ("-j0");
    end Builder;
-
-   package Ide is
-      for Default_Switches ("adacontrol") use ("-f", "verif.aru");
-   end Ide;
 
 end Bar_Codes_GNAT;

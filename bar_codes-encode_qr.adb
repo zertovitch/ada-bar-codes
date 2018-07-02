@@ -25,6 +25,7 @@
 --    Software.
 
 --  !! To do: de-CamelCase-ize
+--  !! To do: remove most "verbosity > 2" cases
 --  !! To do: other places with "!!"...
 
 with Ada.Containers.Vectors;

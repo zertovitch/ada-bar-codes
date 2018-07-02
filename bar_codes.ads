@@ -170,7 +170,7 @@ private
     module_height : Real;
   end record;
 
-  verbosity : Natural := 1;
+  verbosity : constant Natural := 0;
 
   --  Controls diagnostic/debug output during all operations.
   --
