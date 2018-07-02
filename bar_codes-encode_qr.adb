@@ -158,7 +158,7 @@ package body Bar_Codes.Encode_QR is
     for i in 1 .. bits.length loop
       idx := (i - 1) / 8;
       result (idx) := result (idx) or
-        Shift_Left (U8 (bits.element (i)), Natural (7 - ((i - 1) mod 8)));
+        Shift_Left (U8 (bits.element (i)), 7 - ((i - 1) mod 8));
     end loop;
     if verbosity > 1 then
       for i in result'Range loop
