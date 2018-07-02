@@ -28,11 +28,9 @@
 --  !! To do: remove most "verbosity > 2" cases
 --  !! To do: other places with "!!"...
 
-with Ada.Containers.Vectors;
 with Ada.Text_IO; use Ada.Text_IO;
 
 with Interfaces; use Interfaces;
-with Ada.Containers;
 
 package body Bar_Codes.Encode_QR is
 
@@ -110,18 +108,41 @@ package body Bar_Codes.Encode_QR is
      ECI          => (7,  (0,  0,  0))
     );
 
+  function Get_border_size (version : QR_version) return Positive is
+  begin
+    return version * 4 + 17;
+  end Get_border_size;
+
+  max_modules : constant Integer := Get_border_size (QR_version'Last) ** 2;
+
   type Bit is range 0 .. 1;
-  package Bit_vectors is new Ada.Containers.Vectors (Positive, Bit);
-  subtype Bit_vector is Bit_vectors.Vector;  --  Just a simpler type name
+  type Bit_array is array (Positive range <>) of Bit;
+  type Bit_buffer is record
+    length  : Natural := 0;
+    element : Bit_array (1 .. max_modules);
+  end record;
 
   subtype U8 is Unsigned_8;
   subtype U16 is Unsigned_16;
   subtype U32 is Unsigned_32;
 
-  procedure appendBits (bb : in out Bit_vector; value : U32; number_of_bits : Natural) is
+  procedure Append (bb : in out Bit_buffer; value : Bit) is
+  begin
+    bb.length := bb.length + 1;
+    bb.element (bb.length) := value;
+  end Append;
+
+  procedure Append (bb : in out Bit_buffer; values : Bit_buffer) is
+  begin
+    for i in 1 .. values.length loop
+      Append (bb, values.element (i));
+    end loop;
+  end Append;
+
+  procedure appendBits (bb : in out Bit_buffer; value : U32; number_of_bits : Natural) is
   begin
     for pos in reverse 0 .. number_of_bits - 1 loop
-      bb.Append (Bit (Shift_Right (value, pos) and 1));
+      Append (bb, Bit (Shift_Right (value, pos) and 1));
     end loop;
   end appendBits;
 
@@ -130,14 +151,14 @@ package body Bar_Codes.Encode_QR is
   --  Packs this buffer's bits into bytes in big endian,
   --  padding with '0' bit values, and returns the new array.
   --
-  function getBytes (bits : Bit_vector) return Byte_array is
-    result : Byte_array (0 .. Natural (bits.Length) / 8 - 1) := (others => 0);
+  function getBytes (bits : Bit_buffer) return Byte_array is
+    result : Byte_array (0 .. bits.length / 8 - 1) := (others => 0);
     idx : Integer;
   begin
-    for i in 1 .. Integer (bits.Length) loop
+    for i in 1 .. bits.length loop
       idx := (i - 1) / 8;
       result (idx) := result (idx) or
-        Shift_Left (U8 (bits.Element (i)), Natural (7 - ((i - 1) mod 8)));
+        Shift_Left (U8 (bits.element (i)), Natural (7 - ((i - 1) mod 8)));
     end loop;
     if verbosity > 1 then
       for i in result'Range loop
@@ -150,7 +171,7 @@ package body Bar_Codes.Encode_QR is
   type Segment is record
     mode     : Segment_mode;
     numChars : Natural;
-    bitData  : Bit_vector;
+    bitData  : Bit_buffer;
   end record;
 
   type Segment_list is array (Positive range <>) of Segment;
@@ -182,14 +203,14 @@ package body Bar_Codes.Encode_QR is
       if segs (i).numChars >= 2 ** ccbits then
         raise Cannot_Encode with "Segment data too long";
       end if;
-      result := result + 4 + ccbits + Integer (segs (i).bitData.Length);
+      result := result + 4 + ccbits + segs (i).bitData.length;
     end loop;
     return result;
   end getTotalBits;
 
   --  !! rename as: Compose_as_BYTE
   function makeBytes (text : String) return Segment is
-    bit_soup : Bit_vector;
+    bit_soup : Bit_buffer;
   begin
     if verbosity > 2 then
       Put_Line ("makeBytes start");
@@ -235,11 +256,6 @@ package body Bar_Codes.Encode_QR is
     end loop;
     raise Cannot_Encode with "Message to be encoded doesn't fit in any QR version";
   end Get_min_version;
-
-  function Get_border_size (version : QR_version) return Positive is
-  begin
-    return version * 4 + 17;
-  end Get_border_size;
 
   ---------------------------------------------------------------
   --  Error correction codes (could be in a separate package)  --
@@ -666,7 +682,7 @@ package body Bar_Codes.Encode_QR is
       end Apply_mask;
       --
       dataCapacityBits : constant Positive := getNumDataCodewords (version, selected_ecl) * 8;
-      bb : Bit_vector;
+      bb : Bit_buffer;
       segs : constant Segment_list := makeSegments (text);
       padByte : U8;
     begin
@@ -685,33 +701,33 @@ package body Bar_Codes.Encode_QR is
         end if;
         appendBits (bb, U32 (segs (si).numChars), numCharCountBits (segs (si).mode, version));
         if verbosity > 2 then
-          Put_Line ("encodeSegments: one segment, contents length:" & Ada.Containers.Count_Type'Image (segs (si).bitData.Length));
+          Put_Line ("encodeSegments: one segment, contents length:" & Integer'Image (segs (si).bitData.length));
         end if;
         --  Copy bits into concatenated buffer
-        bb.Append (segs (si).bitData);
+        Append (bb, segs (si).bitData);
       end loop;
       --  Add terminator and pad up to a byte if applicable
       if verbosity > 2 then
         Put_Line ("encodeSegments: terminator 1:");
       end if;
-      appendBits (bb, 0, Integer'Min (4, dataCapacityBits - Integer (bb.Length)));
+      appendBits (bb, 0, Integer'Min (4, dataCapacityBits - bb.length));
       if verbosity > 2 then
         Put_Line ("encodeSegments: terminator 2:");
       end if;
-      appendBits (bb, 0, (8 - Integer (bb.Length) mod 8) mod 8);
+      appendBits (bb, 0, (8 - bb.length mod 8) mod 8);
       if verbosity > 2 then
         Put_Line ("encodeSegments: padding:");
       end if;
       --  Pad with alternate bytes until data capacity is reached
       padByte := 16#EC#;
-      while Integer (bb.Length) < dataCapacityBits loop
+      while bb.length < dataCapacityBits loop
         appendBits (bb, U32 (padByte), 8);
         padByte := padByte xor 16#EC# xor 16#11#;
       end loop;
       if verbosity > 2 then
         Put_Line ("encodeSegments: done padding");
       end if;
-      if Integer (bb.Length) mod 8 /= 0 then
+      if bb.length mod 8 /= 0 then
         raise Constraint_Error with "Wrong padding";
       end if;
       --
