@@ -7,7 +7,7 @@ such as PDF, SVG or bitmaps.
 
 The creation of a bar code is as simple as this small procedure:
 
-  with Bar_Codes; use Bar_Codes;
+  with Bar_Codes.Impl; use Bar_Codes, Bar_Codes.Impl;
   with Ada.Text_IO; use Ada.Text_IO;
 
   procedure Small_demo is 
@@ -15,7 +15,7 @@ The creation of a bar code is as simple as this small procedure:
   begin 
     Create (svg, Out_File, "bar_code.svg");
     Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
-    Put_Line (svg, SVG_Bar_Code (Code_128, 57.0, 23.0, "mm", "Hello"));
+    Put_Line (svg, SVG_Bar_Code (Code_QR_Low, 25.0, 25.0, "mm", "Hello"));
     Close (svg);
   end;
 
