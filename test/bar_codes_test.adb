@@ -1,4 +1,4 @@
-with Bar_Codes;                         use Bar_Codes;
+with Bar_Codes.Impl;                    use Bar_Codes, Bar_Codes.Impl;
 
 with Ada.Characters.Handling;           use Ada.Characters.Handling;
 with Ada.Numerics.Float_Random;         use Ada.Numerics.Float_Random;

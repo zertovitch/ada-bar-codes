@@ -1,6 +1,6 @@
 --  Ada Bar Codes Demo (ABCD :-) )
 
-with Bar_Codes;                         use Bar_Codes;
+with Bar_Codes.Impl;                    use Bar_Codes, Bar_Codes.Impl;
 
 with Ada.Text_IO;                       use Ada.Text_IO;
 
