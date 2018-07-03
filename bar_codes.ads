@@ -87,10 +87,11 @@ package Bar_Codes is
   --  The coordinates of a Module_Box are in "module" units.
   --  This is practical for raster graphics (typically on a screen) since the
   --  display can be done on a multiple of those units without rounding errors.
+  --
   type Module_Box is record left, bottom, width, height : Natural; end record;
 
-  --  The Fitting function will return the exact box needed to fit the bar code
-  --  for a given text. Fitting.left = Fitting.bottom = 0.
+  --  The Fitting function will return the exact box, in terms of modules, needed
+  --  to fit the bar code for a given text. Fitting.left = Fitting.bottom = 0.
   --  For 1D codes Fitting.height = 1.
   --
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box;
@@ -113,7 +114,7 @@ package Bar_Codes is
 
   --  Display a string (assumed 7-bit), with non-printable
   --  characters replaced by '*'.
-  function Printable (s : String) return String;
+  function Make_Printable (s : String) return String;
 
   ----------------------------------------------------------------
   --  Information about this package - e.g. for an "about" box  --

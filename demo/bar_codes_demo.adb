@@ -1,7 +1,6 @@
 --  Ada Bar Codes Demo (ABCD :-) )
 
 with Bar_Codes.Impl;                    use Bar_Codes, Bar_Codes.Impl;
-
 with Ada.Text_IO;                       use Ada.Text_IO;
 
 procedure Bar_Codes_Demo is
@@ -30,7 +29,7 @@ procedure Bar_Codes_Demo is
     Close (svg);
     --
     Create (pdf, Out_File, "bar_code_128_pdf.txt");
-    Put_Line (pdf, PDF_Bar_Code (Code_128, (100.0, 200.0, 600.0, 200.0), hello));
+    Put_Line (pdf, PDF_Bar_Code (Code_128, (200.0, 300.0, 400.0, 100.0), hello));
     Close (pdf);
     --
     Create (pbm, Out_File, "bar_code_128.pbm");
@@ -44,6 +43,10 @@ procedure Bar_Codes_Demo is
     SVG_header;
     Put_Line (svg, SVG_Bar_Code (Code_QR_Low, 23.0, 23.0, "mm", hello));
     Close (svg);
+    --
+    Create (pdf, Out_File, "qr_code_pdf.txt");
+    Put_Line (pdf, PDF_Bar_Code (Code_QR_Quartile, (200.0, 100.0, 100.0, 100.0), hello));
+    Close (pdf);
     --
     Create (pbm, Out_File, "qr_code.pbm");
     Put_Line (pbm, PBM_Bar_Code (Code_QR_Low, 3, 3, hello));

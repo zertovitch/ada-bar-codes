@@ -74,7 +74,7 @@ package body Bar_Codes is
     return s (na .. nb);
   end Img;
 
-  function Printable (s : String) return String is
+  function Make_Printable (s : String) return String is
     t : String := s;
   begin
     for i in s'Range loop
@@ -84,6 +84,6 @@ package body Bar_Codes is
       end case;
     end loop;
     return t;
-  end Printable;
+  end Make_Printable;
 
 end Bar_Codes;
