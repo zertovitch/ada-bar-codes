@@ -121,8 +121,8 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "002 preview 1";
-  reference : constant String := "> 18-Jun-2018";
+  version   : constant String := "002";
+  reference : constant String := "05-Jul-2018";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
 

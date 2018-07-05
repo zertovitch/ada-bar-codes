@@ -5,10 +5,10 @@ with Ada.Text_IO;                       use Ada.Text_IO;
 
 procedure Bar_Codes_Demo is
   --  SVG files (bar_code_128.svg, qr_code.svg) can be viewed directly in a Web browser.
-  --  PDF snippet to be included into a PDF document.
+  --  PDF snippets need to be included into a PDF document.
   --       For instance, use Insert_Graphics_PDF_Code of PDF_Out, http://apdf.sf.net/
-  --  PBM image fiels demonstrate an output to raster graphics - could be anything else
-  --       with pixels, like a screen.
+  --  PBM images demonstrate output as raster graphics. This could be another image
+  --       format, or anything else involving pixels, like a screen, a printer, etc.
   svg, pdf, pbm : File_Type;
   --
   procedure SVG_header is

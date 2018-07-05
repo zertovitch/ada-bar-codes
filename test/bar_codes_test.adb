@@ -106,11 +106,11 @@ procedure Bar_Codes_Test is
       "real-time 3D Engine written in Ada, based on OpenGL.";
   begin
     for c in Code_QR loop
-      Spit (c, "empty", "");
-      Spit (c, "blabla 10",  blabla (1 .. 10));
-      Spit (c, "blabla 100", blabla (1 .. 100));
-      Spit (c, "blabla 500", blabla (1 .. 500));
-      Spit (c, "blabla",     blabla);
+      Spit (c, "blabla 1",    blabla (1 .. 1));
+      Spit (c, "blabla 10",   blabla (1 .. 10));
+      Spit (c, "blabla 100",  blabla (1 .. 100));
+      Spit (c, "blabla 500",  blabla (1 .. 500));
+      Spit (c, "blabla full", blabla);
     end loop;
   end Test_QR;
 begin
