@@ -1,1 +1,1 @@
-gprbuild -p -P bar_codes_gnat %1
+gprbuild -P bar_codes_gnat %1
