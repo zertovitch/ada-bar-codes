@@ -1,4 +1,4 @@
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO;
 
 --  Nice to have: find optimal code.
 
@@ -52,7 +52,7 @@ package body Bar_Codes.Encode_Code_128 is
       end if;
       subcode := new_subcode;
       if verbosity > 0 then
-        Put_Line ("[Code 128] switched to subcode " & Code_128_subcode'Image (subcode));
+        Ada.Text_IO.Put_Line ("[Code 128] switched to subcode " & Code_128_subcode'Image (subcode));
       end if;
     end Switch_to;
     --
@@ -143,7 +143,7 @@ package body Bar_Codes.Encode_Code_128 is
     code : constant Sequence := Compose_code (text);
     --
     type Width_sequence is array (1 .. 5) of Positive;
-    width : constant array (Code_Range) of Width_sequence :=
+    widths : constant array (Code_Range) of Width_sequence :=
       --  These are the widths for:  bar, space, bar, space, bar (last space width is implicit).
       (
           0 => (2, 1, 2, 2, 2),
@@ -275,7 +275,7 @@ package body Bar_Codes.Encode_Code_128 is
     for i in code'Range loop
       x := (i - 1) * symbol_width;
       declare
-        ws : constant Width_sequence := width (code (i));
+        ws : constant Width_sequence := widths (code (i));
       begin
         Bar (0,                                 ws (1));
         Bar (ws (1) + ws (2),                   ws (3));

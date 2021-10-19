@@ -1,8 +1,9 @@
 --
 --  QR Code generator library (Ada)
 --
---  Copyright (c) Gautier de Montmollin
+--  Copyright (c) Gautier de Montmollin (Ada translation & maintenance)
 --  http://ada-bar-codes.sf.net
+--  https://github.com/zertovitch/ada-bar-codes
 --
 --  Copyright (c) Project Nayuki
 --  https://www.nayuki.io/page/qr-code-generator-library
@@ -24,15 +25,12 @@
 --    out of or in connection with the Software or the use or other dealings in the
 --    Software.
 
---  !! To do: de-CamelCase-ize
---  !! To do: remove most "verbosity > 2" cases
---  !! To do: other places with "!!"...
-
-with Ada.Text_IO; use Ada.Text_IO;
-
-with Interfaces; use Interfaces;
+with Ada.Text_IO;
+with Interfaces;
 
 package body Bar_Codes.Encode_QR is
+
+  use Ada.Text_IO, Interfaces;
 
   subtype QR_version is Integer range 1 .. 40;
 
@@ -40,7 +38,7 @@ package body Bar_Codes.Encode_QR is
   --  all function modules are excluded. This includes remainder bits, so it might not be a multiple of 8.
   --  The result is in the range [208, 29648].
   --
-  function getNumRawDataModules (ver : QR_version) return Positive is
+  function Get_Num_Raw_Data_Modules (ver : QR_version) return Positive is
     result : Positive := (16 * ver + 128) * ver + 64;
     numAlign : constant Natural := ver / 7 + 2;
     num_alignment_pattern_modules : constant Natural := (25 * numAlign - 10) * numAlign - 55;
@@ -54,12 +52,12 @@ package body Bar_Codes.Encode_QR is
     end if;
     if verbosity > 2 then
       Put_Line (
-        "getNumRawDataModules: result" & Integer'Image (result) &
+        "Get_Num_Raw_Data_Modules: result" & Integer'Image (result) &
         " version" & QR_version'Image (ver)
       );
     end if;
     return result;
-  end getNumRawDataModules;
+  end Get_Num_Raw_Data_Modules;
 
   type Error_Correction_Level is (LOW, MEDIUM, QUARTILE, HIGH);
 
@@ -84,20 +82,20 @@ package body Bar_Codes.Encode_QR is
   --  Returns the number of 8-bit data (i.e. not error correction) codewords contained in any
   --  QR Code of the given version number and error correction level, with remainder bits discarded.
   --
-  function getNumDataCodewords (ver : QR_version; ecl : Error_Correction_Level) return Positive is
+  function Get_Num_Data_Codewords (ver : QR_version; ecl : Error_Correction_Level) return Positive is
   begin
-    return getNumRawDataModules (ver) / 8 -
+    return Get_Num_Raw_Data_Modules (ver) / 8 -
       ECC_CODEWORDS_PER_BLOCK (ecl, ver) *
       NUM_ERROR_CORRECTION_BLOCKS (ecl, ver);
-  end;
+  end Get_Num_Data_Codewords;
 
   type Segment_mode is (NUMERIC, ALPHANUMERIC, BYTE, KANJI, ECI);
 
   type Char_count_bits is array (0 .. 2) of Natural;
 
   type Segment_mode_param is record
-    modeBits : Positive;
-    ccbits   : Char_count_bits;
+    mode_bits : Positive;
+    cc_bits   : Char_count_bits;
   end record;
 
   segment_params : constant array (Segment_mode) of Segment_mode_param :=
@@ -108,9 +106,9 @@ package body Bar_Codes.Encode_QR is
      ECI          => (7,  (0,  0,  0))
     );
 
-  function Get_border_size (version : QR_version) return Positive is
+  function Get_border_size (test_version : QR_version) return Positive is
   begin
-    return version * 4 + 17;
+    return test_version * 4 + 17;
   end Get_border_size;
 
   max_modules : constant Integer := Get_border_size (QR_version'Last) ** 2;
@@ -139,19 +137,19 @@ package body Bar_Codes.Encode_QR is
     end loop;
   end Append;
 
-  procedure appendBits (bb : in out Bit_buffer; value : U32; number_of_bits : Natural) is
+  procedure Append_Bits (bb : in out Bit_buffer; value : U32; number_of_bits : Natural) is
   begin
     for pos in reverse 0 .. number_of_bits - 1 loop
       Append (bb, Bit (Shift_Right (value, pos) and 1));
     end loop;
-  end appendBits;
+  end Append_Bits;
 
   type Byte_array is array (Natural range <>) of U8;
 
   --  Packs this buffer's bits into bytes in big endian,
   --  padding with '0' bit values, and returns the new array.
   --
-  function getBytes (bits : Bit_buffer) return Byte_array is
+  function Get_Bytes (bits : Bit_buffer) return Byte_array is
     result : Byte_array (0 .. bits.length / 8 - 1) := (others => 0);
     idx : Integer;
   begin
@@ -162,92 +160,90 @@ package body Bar_Codes.Encode_QR is
     end loop;
     if verbosity > 1 then
       for i in result'Range loop
-        Put_Line ("getBytes: " & Integer'Image (i) & U8'Image (result (i)));
+        Put_Line ("Get_Bytes: " & Integer'Image (i) & U8'Image (result (i)));
       end loop;
     end if;
     return result;
-  end getBytes;
+  end Get_Bytes;
 
   type Segment is record
-    mode     : Segment_mode;
-    numChars : Natural;
-    bitData  : Bit_buffer;
+    mode      : Segment_mode;
+    num_chars : Natural;
+    bit_data  : Bit_buffer;
   end record;
 
   type Segment_list is array (Positive range <>) of Segment;
 
-  function numCharCountBits (mode : Segment_mode; ver : QR_version) return Natural is
+  function Num_Char_Count_Bits (seg_mode : Segment_mode; ver : QR_version) return Natural is
   begin
     case ver is
-      when 1 .. 9   => return segment_params (mode).ccbits (0);
-      when 10 .. 26 => return segment_params (mode).ccbits (1);
-      when 27 .. 40 => return segment_params (mode).ccbits (2);
+      when 1 .. 9   => return segment_params (seg_mode).cc_bits (0);
+      when 10 .. 26 => return segment_params (seg_mode).cc_bits (1);
+      when 27 .. 40 => return segment_params (seg_mode).cc_bits (2);
     end case;
-  end numCharCountBits;
+  end Num_Char_Count_Bits;
 
-  function getTotalBits (segs : Segment_list; version : QR_version) return Natural is
+  function Get_Total_Bits (segs : Segment_list; test_version : QR_version) return Natural is
     result : Natural := 0;
-    ccbits : Positive;
+    cc_bits : Positive;
   begin
     for i in segs'Range loop
-      ccbits := numCharCountBits (segs (i).mode, version);
+      cc_bits := Num_Char_Count_Bits (segs (i).mode, test_version);
       if verbosity > 2 then
         Put_Line (
-          "getTotalBits: segment" & Integer'Image (i) &
-          " mode " & Segment_mode'Image (segs (i).mode) &
-          " version" & QR_version'Image (version) &
-          " ccbits" & Integer'Image (ccbits)
+          "Get_Total_Bits: segment" & Integer'Image (i) &
+          " mode "        & Segment_mode'Image (segs (i).mode) &
+          " test_version" & QR_version'Image (test_version) &
+          " cc_bits"      & Integer'Image (cc_bits)
         );
       end if;
       --  Fail if segment length value doesn't fit in the length field's bit-width
-      if segs (i).numChars >= 2 ** ccbits then
+      if segs (i).num_chars >= 2 ** cc_bits then
         raise Cannot_Encode with "Segment data too long";
       end if;
-      result := result + 4 + ccbits + segs (i).bitData.length;
+      result := result + 4 + cc_bits + segs (i).bit_data.length;
     end loop;
     return result;
-  end getTotalBits;
+  end Get_Total_Bits;
 
-  --  !! rename as: Compose_as_BYTE
-  function makeBytes (text : String) return Segment is
+  function Compose_As_BYTE (text : String) return Segment is
     bit_soup : Bit_buffer;
   begin
     if verbosity > 2 then
-      Put_Line ("makeBytes start");
+      Put_Line ("Compose_As_BYTE start");
     end if;
     for i in text'Range loop
-      appendBits (bit_soup, U32 (Character'Pos (text (i))), 8);
+      Append_Bits (bit_soup, U32 (Character'Pos (text (i))), 8);
     end loop;
     if verbosity > 2 then
-      Put_Line ("makeBytes done");
+      Put_Line ("Compose_As_BYTE done");
     end if;
-    return (mode => BYTE, numChars => text'Length, bitData => bit_soup);
-  end makeBytes;
+    return (mode => BYTE, num_chars => text'Length, bit_data => bit_soup);
+  end Compose_As_BYTE;
 
-  --  !! rename as: Compose_segments
-  function makeSegments (text : String) return Segment_list is
+  function Compose_Segments (text : String) return Segment_list is
   begin
-    return (1 => makeBytes (text));
-    --  !! To-do: split the text to make a smart mix of numeric,
-    --     alphanumeric, etc. for having a compact encoding
-  end makeSegments;
+    return (1 => Compose_As_BYTE (text));
+    --  !! To do: split the text to make a smart mix of numeric,
+    --            alphanumeric, etc. for having a compact encoding
+  end Compose_Segments;
 
   function Get_min_version (ecl : Error_Correction_Level; text : String) return QR_version is
-    dataUsedBits, dataCapacityBits : Positive;
-    segs : constant Segment_list := makeSegments (text);
+    data_used_bits, data_capacity_bits : Positive;
+    segs : constant Segment_list := Compose_Segments (text);
   begin
-    for version in QR_version loop
-      dataCapacityBits := getNumDataCodewords (version, ecl) * 8;
+    for test_version in QR_version loop
+      data_capacity_bits := Get_Num_Data_Codewords (test_version, ecl) * 8;
       begin
-        dataUsedBits := getTotalBits (segs, version);
+        data_used_bits := Get_Total_Bits (segs, test_version);
         if verbosity > 2 then
           Put_Line (
-            "Get_min_version: test QR version" & Integer'Image (version) &
-            " dataUsedBits="     & Integer'Image (dataUsedBits) &
-            " dataCapacityBits=" & Integer'Image (dataCapacityBits));
+            "Get_min_version: test QR version" & Integer'Image (test_version) &
+            " data_used_bits ="     & Integer'Image (data_used_bits) &
+            " data_capacity_bits =" & Integer'Image (data_capacity_bits));
         end if;
-        if dataUsedBits <= dataCapacityBits then
-          return version;
+        if data_used_bits <= data_capacity_bits then
+          return test_version;
         end if;
       exception
         when Cannot_Encode =>
@@ -262,7 +258,7 @@ package body Bar_Codes.Encode_QR is
   ---------------------------------------------------------------
 
   --  Returns the product of the two given field elements modulo GF(2^8/16#11D#).
-  function finiteFieldMultiply (x, y : U8) return U8 is
+  function Finite_Field_Multiply (x, y : U8) return U8 is
     z : U8 := 0;
   begin
     --  Russian peasant multiplication
@@ -271,10 +267,10 @@ package body Bar_Codes.Encode_QR is
       z := z xor (Shift_Right (y, i) and 1) * x;
     end loop;
     return z;
-  end finiteFieldMultiply;
+  end Finite_Field_Multiply;
 
   --  Calculates the Reed-Solomon generator polynomial of the given degree, storing in result[0 : degree].
-  procedure calcReedSolomonGenerator (result : out Byte_array) is
+  procedure Calc_Reed_Solomon_Generator (result : out Byte_array) is
     degree : constant Positive := result'Last + 1;
     root : U8;
   begin
@@ -288,19 +284,19 @@ package body Bar_Codes.Encode_QR is
     for i in 0 .. degree - 1 loop
       --  Multiply the current product by (x - r^i)
       for j in 0 .. degree - 1 loop
-        result (j) := finiteFieldMultiply (result (j), root);
+        result (j) := Finite_Field_Multiply (result (j), root);
         if j + 1 < degree then
           result (j) := result (j) xor result (j + 1);
         end if;
       end loop;
-      root := finiteFieldMultiply (root, 2);
+      root := Finite_Field_Multiply (root, 2);
     end loop;
-  end calcReedSolomonGenerator;
+  end Calc_Reed_Solomon_Generator;
 
   --  Calculates the remainder of the polynomial data when divided by the generator, where all
   --  polynomials are in big endian and the generator has an implicit leading 1 term,
   --  storing the result in result[0 : degree].
-  procedure calcReedSolomonRemainder (data, generator : Byte_array; result : out Byte_array) is
+  procedure Calc_Reed_Solomon_Remainder (data, generator : Byte_array; result : out Byte_array) is
     factor : U8;
     degree : constant Natural := generator'Length;
     --  Perform polynomial division
@@ -313,7 +309,7 @@ package body Bar_Codes.Encode_QR is
       factor := data (i) xor result (result'First);
       if verbosity > 2 then
         Put_Line (
-          "calcReedSolomonRemainder: dumping data, factor: " &
+          "Calc_Reed_Solomon_Remainder: dumping data, factor: " &
           Integer'Image (i) & U8'Image (data (i)) & U8'Image (factor));
       end if;
       --  Shift.
@@ -322,10 +318,10 @@ package body Bar_Codes.Encode_QR is
       result (result'First + degree - 1) := 0;
       for j in 0 .. degree - 1 loop
         result (result'First + j) := result (result'First + j) xor
-          finiteFieldMultiply (generator (generator'First + j), factor);
+          Finite_Field_Multiply (generator (generator'First + j), factor);
       end loop;
     end loop;
-  end calcReedSolomonRemainder;
+  end Calc_Reed_Solomon_Remainder;
 
   qr_kind_to_ecl : constant array (Code_QR) of Error_Correction_Level :=
         (Code_QR_Low        =>   LOW,
@@ -336,31 +332,31 @@ package body Bar_Codes.Encode_QR is
 
   procedure Draw (bc : in out Bar_Code; text : String; qr_kind : Code_QR) is
     selected_ecl : constant Error_Correction_Level := qr_kind_to_ecl (qr_kind);
-    version : constant QR_version := Get_min_version (selected_ecl, text);
-    border_size : constant Positive := Get_border_size (version);
+    min_version  : constant QR_version             := Get_min_version (selected_ecl, text);
+    border_size  : constant Positive               := Get_border_size (min_version);
     --  Coordinates in the QR square:
     subtype Module_range is Integer range 0 .. border_size - 1;
     --
     --  The grid y axis is top-down; coordinates are (y,x).
     type Grid is array (Module_range, Module_range) of Boolean;
     --
-    modules, isFunction : Grid := (others => (others => False));
+    modules, is_function : Grid := (others => (others => False));
     --
     --  Sets the color of a module and marks it as a function module.
     --
-    procedure setFunctionModule (x, y : Module_range; isBlack : Boolean) is
+    procedure Set_Function_Module (x, y : Module_range; is_black : Boolean) is
     begin
-      modules (y, x)    := isBlack;
-      isFunction (y, x) := True;  --  Cell is marked, be it black or white.
-    end;
+      modules (y, x)     := is_black;
+      is_function (y, x) := True;  --  Cell is marked, be it black or white.
+    end Set_Function_Module;
     --
     --  Table 23: Mask pattern generation (8 different ways of XOR masking).
     type Mask_pattern_reference is range 0 .. 7;
     --
-    function Get_Bit (x : U16; bit : Natural) return Boolean is
+    function Get_Bit (x : U16; bit_pos : Natural) return Boolean is
     begin
-      return (Shift_Right (x, bit) and 1) /= 0;
-    end;
+      return (Shift_Right (x, bit_pos) and 1) /= 0;
+    end Get_Bit;
     --
     --  8.9 Format Information
     --
@@ -392,24 +388,24 @@ package body Bar_Codes.Encode_QR is
       --
       --  Draw first copy on top left corner
       for i in 0 .. 5 loop
-        setFunctionModule (8, i, Get_Bit (data, i));
+        Set_Function_Module (8, i, Get_Bit (data, i));
       end loop;
-      setFunctionModule (8, 7, Get_Bit (data, 6));
-      setFunctionModule (8, 8, Get_Bit (data, 7));
-      setFunctionModule (7, 8, Get_Bit (data, 8));
+      Set_Function_Module (8, 7, Get_Bit (data, 6));
+      Set_Function_Module (8, 8, Get_Bit (data, 7));
+      Set_Function_Module (7, 8, Get_Bit (data, 8));
       for i in 9 .. 14 loop
-        setFunctionModule (14 - i, 8, Get_Bit (data, i));
+        Set_Function_Module (14 - i, 8, Get_Bit (data, i));
       end loop;
       --  Draw second copy
       for i in 0 .. 7 loop
-        setFunctionModule (border_size - 1 - i, 8, Get_Bit (data, i));
+        Set_Function_Module (border_size - 1 - i, 8, Get_Bit (data, i));
       end loop;
       for i in 8 .. 14 loop
-        setFunctionModule (8, border_size - 15 + i, Get_Bit (data, i));
+        Set_Function_Module (8, border_size - 15 + i, Get_Bit (data, i));
       end loop;
       --  The lonely Dark Module ("...shall always be dark and
       --  does not form part of the Format Information.")
-      setFunctionModule (8, border_size - 8, True);
+      Set_Function_Module (8, border_size - 8, True);
     end Draw_Format_Bits;
     --
     --  Draw patterns that do not belong to encoded data: the three
@@ -430,7 +426,7 @@ package body Bar_Codes.Encode_QR is
             xx := x + dx;
             yy := y + dy;
             if xx in Module_range and then yy in Module_range then
-              setFunctionModule (xx, yy, dist /= 2 and dist /= 4);
+              Set_Function_Module (xx, yy, dist /= 2 and dist /= 4);
             end if;
           end loop;
         end loop;
@@ -446,20 +442,20 @@ package body Bar_Codes.Encode_QR is
           for dx in -2 .. 2 loop
             for dy in -2 .. 2 loop
               dist := Integer'Max (abs dx, abs dy);  --  Chebyshev / infinity norm
-              setFunctionModule (x + dx, y + dy, dist /= 1);
+              Set_Function_Module (x + dx, y + dy, dist /= 1);
             end loop;
           end loop;
         end Draw_Alignment_Pattern;
         --
         num_align : Natural := 0;
         step : Integer := 26;
-        pos : Integer := version * 4 + 10;
+        pos : Integer := min_version * 4 + 10;
         align_pos : array (1 .. 7) of Integer;
       begin
-        if version > 1 then
-          num_align := version / 7 + 2;
-          if version /= 32 then
-            step := ((version * 4 + num_align * 2 + 1) / (2 * num_align - 2)) * 2;
+        if min_version > 1 then
+          num_align := min_version / 7 + 2;
+          if min_version /= 32 then
+            step := ((min_version * 4 + num_align * 2 + 1) / (2 * num_align - 2)) * 2;
           end if;
           align_pos (1) := 6;
           for i in reverse 2 .. num_align loop
@@ -491,24 +487,24 @@ package body Bar_Codes.Encode_QR is
         --  correction bits calculated using the (18, 6) BCH code.
         data, bch : U16;
         a, b : Module_range;
-        bit : Boolean;
+        data_bit : Boolean;
       begin
-        if version < 7 then
+        if min_version < 7 then
           return;
         end if;
         --  Calculate error correction code and pack bits
-        bch := U16 (version);
+        bch := U16 (min_version);
         for i in 1 .. 12 loop
           bch := Shift_Left (bch, 1) xor (Shift_Right (bch, 11) * 16#1F25#);
         end loop;
-        data := Shift_Left (U16 (version), 12) + bch;
+        data := Shift_Left (U16 (min_version), 12) + bch;
         --  Draw two copies
         for i in 0 .. 17 loop
           a := border_size - 11 + i mod 3;
           b := i / 3;
-          bit := Get_Bit (data, i);
-          setFunctionModule (a, b, bit);
-          setFunctionModule (b, a, bit);
+          data_bit := Get_Bit (data, i);
+          Set_Function_Module (a, b, data_bit);
+          Set_Function_Module (b, a, data_bit);
         end loop;
       end Draw_Version;
       --
@@ -516,8 +512,8 @@ package body Bar_Codes.Encode_QR is
       --  7.3.4 - Draw horizontal and vertical timing
       --          patterns (dotted lines).
       for i in Module_range loop
-        setFunctionModule (6, i, i mod 2 = 0);
-        setFunctionModule (i, 6, i mod 2 = 0);
+        Set_Function_Module (6, i, i mod 2 = 0);
+        Set_Function_Module (i, 6, i mod 2 = 0);
       end loop;
       --  7.3.2 - Draw 3 finder patterns (all corners except bottom
       --          right; overwrites some timing modules)
@@ -539,75 +535,79 @@ package body Bar_Codes.Encode_QR is
     --  the input data. data (rawCodewords - totalEcc .. rawCodewords - 1) is used as a temporary work area.
     --  The final answer is stored in result.
     --
-    function appendErrorCorrection (in_data : Byte_array) return Byte_array is
-      numBlocks : constant Integer := NUM_ERROR_CORRECTION_BLOCKS (selected_ecl, version);
-      blockEccLen : constant Integer := ECC_CODEWORDS_PER_BLOCK (selected_ecl, version);
-      rawCodewords : constant Integer := getNumRawDataModules (version) / 8;
-      dataLen : constant Integer := rawCodewords - blockEccLen * numBlocks;
-      numShortBlocks : constant Integer := numBlocks - rawCodewords mod numBlocks;
-      shortBlockDataLen : constant Integer := rawCodewords / numBlocks - blockEccLen;
+    function Append_Error_Correction (in_data : Byte_array) return Byte_array is
+      num_blocks           : constant Integer := NUM_ERROR_CORRECTION_BLOCKS (selected_ecl, min_version);
+      block_ECC_len        : constant Integer := ECC_CODEWORDS_PER_BLOCK (selected_ecl, min_version);
+      raw_code_words       : constant Integer := Get_Num_Raw_Data_Modules (min_version) / 8;
+      data_len             : constant Integer := raw_code_words - block_ECC_len * num_blocks;
+      num_short_blocks     : constant Integer := num_blocks - raw_code_words mod num_blocks;
+      short_block_data_len : constant Integer := raw_code_words / num_blocks - block_ECC_len;
       --
-      data, result : Byte_array (0 .. rawCodewords - 1);
-      generator : Byte_array (0 .. blockEccLen - 1);
-      j, k, l, blockLen : Integer;
+      data, result : Byte_array (0 .. raw_code_words - 1);
+      generator : Byte_array (0 .. block_ECC_len - 1);
+      j, k, l, block_len : Integer;
     begin
-      data (0 .. dataLen - 1) := in_data;
+      data (0 .. data_len - 1) := in_data;
       --
       --  8.5.2 Generating the error correction codeword
       --
       --  Split data into blocks and append ECC after all data
-      calcReedSolomonGenerator (generator);
+      Calc_Reed_Solomon_Generator (generator);
       if verbosity > 2 then
         for i in generator'Range loop
             Put_Line ("Dumping ECC generator: " & Integer'Image (i) & U8'Image (generator (i)));
         end loop;
       end if;
       --
-      j := dataLen;
+      j := data_len;
       k := 0;
-      for i in 0 .. numBlocks - 1 loop
-        blockLen := shortBlockDataLen;
-        if i >= numShortBlocks then
-          blockLen := blockLen + 1;
+      for i in 0 .. num_blocks - 1 loop
+        block_len := short_block_data_len;
+        if i >= num_short_blocks then
+          block_len := block_len + 1;
         end if;
-        calcReedSolomonRemainder (data (k .. k + blockLen - 1), generator, data (j .. j + generator'Length - 1));
-        j := j + blockEccLen;
-        k := k + blockLen;
+        Calc_Reed_Solomon_Remainder (
+          data (k .. k + block_len - 1),
+          generator,
+          data (j .. j + generator'Length - 1)
+        );
+        j := j + block_ECC_len;
+        k := k + block_len;
       end loop;
       --
       --  8.6 Constructing the final message codeword sequence
       --
       --  Interleave (not concatenate) the bytes from every block into a single sequence
       k := 0;
-      for i in 0 .. numBlocks - 1 loop
+      for i in 0 .. num_blocks - 1 loop
         l := i;
-        for j in 0 .. shortBlockDataLen - 1 loop
+        for j in 0 .. short_block_data_len - 1 loop
           result (l) := data (k);
           k := k + 1;
-          l := l + numBlocks;
+          l := l + num_blocks;
         end loop;
-        if i >= numShortBlocks then
+        if i >= num_short_blocks then
           k := k + 1;
         end if;
       end loop;
-      k := (numShortBlocks + 1) * shortBlockDataLen;
-      l := numBlocks * shortBlockDataLen;
-      for i in numShortBlocks .. numBlocks - 1 loop
+      k := (num_short_blocks + 1) * short_block_data_len;
+      l := num_blocks * short_block_data_len;
+      for i in num_short_blocks .. num_blocks - 1 loop
         result (l) := data (k);
-        k := k + shortBlockDataLen + 1;
+        k := k + short_block_data_len + 1;
         l := l + 1;
       end loop;
-      k := dataLen;
-      for i in 0 .. numBlocks - 1 loop
-        l := dataLen + i;
-        for j in 0 .. blockEccLen - 1 loop
+      k := data_len;
+      for i in 0 .. num_blocks - 1 loop
+        l := data_len + i;
+        for j in 0 .. block_ECC_len - 1 loop
           result (l) := data (k);
           k := k + 1;
-          l := l + numBlocks;
+          l := l + num_blocks;
         end loop;
       end loop;
       return result;
-    end appendErrorCorrection;
+    end Append_Error_Correction;
     --
     procedure Draw_Data is
       --
@@ -634,7 +634,7 @@ package body Bar_Codes.Encode_QR is
               else
                 y := vert;
               end if;
-              if not isFunction (y, x) then
+              if not is_function (y, x) then
                 idx := data_and_ecc_bytes'First + i / 8;
                 if idx > data_and_ecc_bytes'Last then
                   --  If there are any remainder bits (0 to 7), they are already
@@ -664,7 +664,7 @@ package body Bar_Codes.Encode_QR is
       begin
         for y in Module_range loop
           for x in Module_range loop
-            if not isFunction (y, x) then
+            if not is_function (y, x) then
               case mask_ref is
                 when 0 => invert := (x + y) mod 2 = 0;
                 when 1 => invert := y mod 2 = 0;
@@ -681,51 +681,51 @@ package body Bar_Codes.Encode_QR is
         end loop;
       end Apply_mask;
       --
-      dataCapacityBits : constant Positive := getNumDataCodewords (version, selected_ecl) * 8;
+      data_capacity_bits : constant Positive := Get_Num_Data_Codewords (min_version, selected_ecl) * 8;
       bb : Bit_buffer;
-      segs : constant Segment_list := makeSegments (text);
-      padByte : U8;
+      segs : constant Segment_list := Compose_Segments (text);
+      pad_byte : U8;
     begin
       if verbosity > 2 then
-        Put_Line ("encodeSegments: QR version:" & QR_version'Image (version));
-        Put_Line ("encodeSegments: dataCapacityBits:" & Integer'Image (dataCapacityBits));
+        Put_Line ("Draw_Data: QR version:" & QR_version'Image (min_version));
+        Put_Line ("Draw_Data: data_capacity_bits:" & Integer'Image (data_capacity_bits));
       end if;
       --  Create the data bit string by concatenating all segments
       for si in segs'Range loop
         if verbosity > 2 then
-          Put_Line ("encodeSegments: one segment, modeBits:");
+          Put_Line ("Draw_Data: one segment, mode_bits:");
         end if;
-        appendBits (bb, U32 (segment_params (segs (si).mode).modeBits), 4);
+        Append_Bits (bb, U32 (segment_params (segs (si).mode).mode_bits), 4);
         if verbosity > 2 then
-          Put_Line ("encodeSegments: one segment, numChars:");
+          Put_Line ("Draw_Data: one segment, num_chars:");
         end if;
-        appendBits (bb, U32 (segs (si).numChars), numCharCountBits (segs (si).mode, version));
+        Append_Bits (bb, U32 (segs (si).num_chars), Num_Char_Count_Bits (segs (si).mode, min_version));
         if verbosity > 2 then
-          Put_Line ("encodeSegments: one segment, contents length:" & Integer'Image (segs (si).bitData.length));
+          Put_Line ("Draw_Data: one segment, contents length:" & Integer'Image (segs (si).bit_data.length));
         end if;
         --  Copy bits into concatenated buffer
-        Append (bb, segs (si).bitData);
+        Append (bb, segs (si).bit_data);
       end loop;
       --  Add terminator and pad up to a byte if applicable
       if verbosity > 2 then
-        Put_Line ("encodeSegments: terminator 1:");
+        Put_Line ("Draw_Data: terminator 1:");
       end if;
-      appendBits (bb, 0, Integer'Min (4, dataCapacityBits - bb.length));
+      Append_Bits (bb, 0, Integer'Min (4, data_capacity_bits - bb.length));
       if verbosity > 2 then
-        Put_Line ("encodeSegments: terminator 2:");
+        Put_Line ("Draw_Data: terminator 2:");
       end if;
-      appendBits (bb, 0, (8 - bb.length mod 8) mod 8);
+      Append_Bits (bb, 0, (8 - bb.length mod 8) mod 8);
       if verbosity > 2 then
-        Put_Line ("encodeSegments: padding:");
+        Put_Line ("Draw_Data: padding:");
       end if;
       --  Pad with alternate bytes until data capacity is reached
-      padByte := 16#EC#;
-      while bb.length < dataCapacityBits loop
-        appendBits (bb, U32 (padByte), 8);
-        padByte := padByte xor 16#EC# xor 16#11#;
+      pad_byte := 16#EC#;
+      while bb.length < data_capacity_bits loop
+        Append_Bits (bb, U32 (pad_byte), 8);
+        pad_byte := pad_byte xor 16#EC# xor 16#11#;
       end loop;
       if verbosity > 2 then
-        Put_Line ("encodeSegments: done padding");
+        Put_Line ("Draw_Data: done padding");
       end if;
       if bb.length mod 8 /= 0 then
         raise Constraint_Error with "Wrong padding";
@@ -734,9 +734,9 @@ package body Bar_Codes.Encode_QR is
       --  Now bb contains the exact bit sequence to be drawn, turn it into a byte buffer
       --
       declare
-        data_bytes : constant Byte_array := getBytes (bb);
-        data_and_ecc_bytes : constant Byte_array := appendErrorCorrection (data_bytes);
-        --  !!  to do: automatic mask selection (penalty etc.)
+        data_bytes : constant Byte_array := Get_Bytes (bb);
+        data_and_ecc_bytes : constant Byte_array := Append_Error_Correction (data_bytes);
+        --  !!  To do: automatic mask selection (penalty etc.)
         mask_ref_chosen : constant Mask_pattern_reference := 0;
       begin
         if verbosity > 1 then
@@ -770,7 +770,7 @@ package body Bar_Codes.Encode_QR is
     end Output_to_media;
   begin
     if verbosity > 0 then
-      Put_Line ("[QR code] version" & QR_version'Image (version));
+      Put_Line ("[QR code] version" & QR_version'Image (min_version));
     end if;
     Draw_Function_Patterns;
     Draw_Data;

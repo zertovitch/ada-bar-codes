@@ -1,11 +1,11 @@
----------------------------------------------------------------------------
---  Ready-to-use implementations of the bar code generator:              --
---                                                                       --
---    - PDF_Bar_Code: PDF vector graphics for PDF documents              --
---    - SVG_Bar_Code: SVG vector graphics for Web contents               --
---    - PBM_Bar_Code: PBM bitmap image as an example of raster graphics  --
---                                                                       --
----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+--  Ready-to-use implementations of the bar code generator:               --
+--                                                                        --
+--    - PDF_Bar_Code : PDF vector graphics for PDF documents              --
+--    - SVG_Bar_Code : SVG vector graphics for Web contents               --
+--    - PBM_Bar_Code : PBM bitmap image as an example of raster graphics  --
+--                                                                        --
+----------------------------------------------------------------------------
 
 package Bar_Codes.Impl is
 
