@@ -65,6 +65,13 @@ Giuseppe Cannone, for the inspiration and advice.
 Jeffrey R. Carter, for the first implementation on raster graphics and as a Web service:
    https://github.com/jrcarter/Gnoga_Bar_Codes
 
+
+On the Web
+==========
+home page:     http://ada-bar-codes.sf.net/
+project page:  http://sf.net/projects/ada-bar-codes/
+mirror:        https://github.com/zertovitch/ada-bar-codes
+
 --
 Enjoy!
 

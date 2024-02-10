@@ -12,75 +12,57 @@ project Bar_Codes_GNAT is
 
    type ABC_Build_Mode_Type is
       ("Debug", 
-       "Fast",
-       --  Check_2005 mode is for checking that the *library* is strictly
-       --  Ada-2005-compliant, for being compiled by the broadest set of compilers.
-       --  The demos, tools and tests may use some Ada 2012 features.
-       "Check_2005");
+       "Fast");
 
    ABC_Build_Mode : ABC_Build_Mode_Type := external ("ABC_Build_Mode", "Debug");
 
    case ABC_Build_Mode is
-      when "Check_2005" =>
-         for Source_Dirs use (".");
-         for Main use ();
       when others =>
-         for Source_Dirs use (
-           ".",      --  Library: Bar_Codes[.*]
-           "demo",   --  Demos
-           "test",   --  Tests
-           "gnat"    --  GNAT-specific stuff
-         );
-         for Main use (
-           "bar_codes_demo.adb",   --  Main demo
-           "bar_codes_test.adb"    --  Tests
-         );
+         for Source_Dirs use
+           (".",      --  Library: Bar_Codes[.*]
+            "demo",   --  Demos
+            "test",   --  Tests
+            "gnat");  --  GNAT-specific stuff
+         for Main use
+           ("bar_codes_demo.adb",   --  Main demo
+            "bar_codes_test.adb");  --  Tests
    end case;
 
    for Exec_Dir use ".";
    for Create_Missing_Dirs use "True";  --  Flips by default the "-p" switch
 
    case ABC_Build_Mode is
-
-      when "Debug" | "Check_2005" =>
-         for Object_Dir use "obj_debug";
-
-      when "Fast" =>
-         for Object_Dir use "obj_fast";
+      when "Debug" => for Object_Dir use "obj/debug";
+      when "Fast"  => for Object_Dir use "obj/fast";
    end case;
 
-   Common_Options := (
-     "-gnatwaC",                       --  Warnings switches (a:turn on all info/warnings marked with +; C:turn off warnings for constant conditional)
-     "-gnatwh",                        --  Warnings switches (h:turn on warnings for hiding declarations)
-     "-gnatwijkmopruvz.c.n.p.t.w.x",   --  Warnings switches (run "gnatmake" for full list)
-     "-gnatf",  --  Full errors. Verbose details, all undefined references
-     "-gnatq",  --  Don't quit, try semantics, even if parse errors
-     "-gnatQ")  --  Don't quit, write ali/tree file even if compile errors
+   Common_Options :=
+     ("-gnatwaC",                       --  Warnings switches (a:turn on all info/warnings marked with +; C:turn off warnings for constant conditional)
+      "-gnatwh",                        --  Warnings switches (h:turn on warnings for hiding declarations)
+      "-gnatwijkmopruvz.c.n.p.t.w.x",   --  Warnings switches (run "gnatmake" for full list)
+      "-gnatf",  --  Full errors. Verbose details, all undefined references
+      "-gnatq",  --  Don't quit, try semantics, even if parse errors
+      "-gnatQ")  --  Don't quit, write ali/tree file even if compile errors
    &
-    ("-gnatyaknpr",  --  Style: check all casings: a:attribute, k:keywords, n:package Standard identifiers, p:pragma, r:identifier references
-     "-gnatybfhiu",  --  Style: check b:no blanks at end of lines, f:no ff/vtabs, h: no htabs, i:if-then layout, u:no unnecessary blank lines
-     "-gnatyxtc",    --  Style: check x:no extra parens, t:token separation rules, c:comment format (two spaces)
-     "-gnatye",      --  Style: check e:end/exit labels present
-     "-gnaty2",      --  Style: check indentation
-     "-gnatyO");     --  Style: check O:check overriding indicators
+     ("-gnatyaknpr",  --  Style: check all casings: a:attribute, k:keywords, n:package Standard identifiers, p:pragma, r:identifier references
+      "-gnatybfhiu",  --  Style: check b:no blanks at end of lines, f:no ff/vtabs, h: no htabs, i:if-then layout, u:no unnecessary blank lines
+      "-gnatyxtc",    --  Style: check x:no extra parens, t:token separation rules, c:comment format (two spaces)
+      "-gnatye",      --  Style: check e:end/exit labels present
+      "-gnaty2",      --  Style: check indentation
+      "-gnatyO");     --  Style: check O:check overriding indicators
 
    package Compiler is
 
       case ABC_Build_Mode is
 
-         when "Check_2005" => for Default_Switches ("ada") use Common_Options & (
-              "-gnat05",
-              "-gnato", "-gnatVa"
-              );
-
          when "Debug" =>
             for Local_Configuration_Pragmas use project'Project_Dir & "gnat/debug.pra";
-            for Default_Switches ("ada") use Common_Options & (
-              "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatVa");
+            for Default_Switches ("ada") use Common_Options &
+              ("-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatVa");
 
          when "Fast" =>
-            for Default_Switches ("ada") use Common_Options & (
-              "-O2", "-gnatn", "-gnatp", "-fno-strict-aliasing", "-funroll-loops", "-fpeel-loops", "-ftracer", "-funswitch-loops", "-fweb", "-frename-registers");
+            for Default_Switches ("ada") use Common_Options &
+              ("-Ofast", "-gnatn");
       end case;
    end Compiler;
    
