@@ -5,7 +5,7 @@
 --      project page:  http://sf.net/projects/ada-bar-codes/
 --      mirror:        https://github.com/zertovitch/ada-bar-codes
 --
---  Build me with "gprbuild -P bar_codes_gnat", or "gnatmake -P bar_codes_gnat",
+--  Build me with "gprbuild -P ada_bar_codes_gnat", or "gnatmake -P ada_bar_codes_gnat",
 --  or open me with GNAT Studio
 --
 project Ada_Bar_Codes_GNAT is

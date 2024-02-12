@@ -50,6 +50,8 @@ Here is how to build with GNAT/GCC:
 
     - type "gprbuild -P ada_bar_codes_gnat" in the command line
 or
+    - type "gnatmake -P ada_bar_codes_gnat" in the command line
+or
     - open the ada_bar_codes_gnat.gpr file (will launch GNAT Studio),
       press F4 (Build)
 
