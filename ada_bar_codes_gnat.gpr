@@ -8,7 +8,7 @@
 --  Build me with "gprbuild -P bar_codes_gnat", or "gnatmake -P bar_codes_gnat",
 --  or open me with GNAT Studio
 --
-project Bar_Codes_GNAT is
+project Ada_Bar_Codes_GNAT is
 
    type ABC_Build_Mode_Type is
       ("Debug", 
@@ -16,18 +16,18 @@ project Bar_Codes_GNAT is
 
    ABC_Build_Mode : ABC_Build_Mode_Type := external ("ABC_Build_Mode", "Debug");
 
-   case ABC_Build_Mode is
-      when others =>
-         for Source_Dirs use
-           (".",      --  Library: Bar_Codes[.*]
-            "demo",   --  Demos
-            "test",   --  Tests
-            "gnat");  --  GNAT-specific stuff
-         for Main use
-           ("bar_codes_demo.adb",   --  Main demo
-            "bar_codes_test.adb");  --  Tests
-   end case;
+   Adaflags := External_As_List ("ADAFLAGS", " ");
+   Ldflags  := External_As_List ("LDFLAGS", " ");
 
+   for Source_Dirs use
+     (".",      --  Library: Bar_Codes[.*]
+      "demo",   --  Demos
+      "test");  --  Tests
+
+   for Main use
+     ("bar_codes_demo.adb",   --  Main demo
+      "bar_codes_test.adb");  --  Tests
+   
    for Exec_Dir use ".";
    for Create_Missing_Dirs use "True";  --  Flips by default the "-p" switch
 
@@ -49,7 +49,9 @@ project Bar_Codes_GNAT is
       "-gnatyxtc",    --  Style: check x:no extra parens, t:token separation rules, c:comment format (two spaces)
       "-gnatye",      --  Style: check e:end/exit labels present
       "-gnaty2",      --  Style: check indentation
-      "-gnatyO");     --  Style: check O:check overriding indicators
+      "-gnatyO")      --  Style: check O:check overriding indicators
+      
+   & Adaflags;
 
    package Compiler is
 
@@ -77,4 +79,11 @@ project Bar_Codes_GNAT is
       for Default_Switches ("ada") use ("-j0");
    end Builder;
 
-end Bar_Codes_GNAT;
+   package Linker is
+      case ABC_Build_Mode is
+         when "Debug" => for Switches ("Ada") use Ldflags;
+         when others  => null;
+      end case;
+   end Linker;  
+ 
+ end Ada_Bar_Codes_GNAT;

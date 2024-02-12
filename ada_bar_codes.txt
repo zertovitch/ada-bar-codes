@@ -26,13 +26,14 @@ Contents
   Ada Bar Codes
   =============
 
-  - bar_codes.ads        : package specification
-  - bar_codes.adb        : package body
-  - bar_codes-*          : private children packages (needed but not relevant for users)
-  - bar_codes_demo.adb   : demo procedure
-  - bar_codes_gnat.gpr   : project file for the AdaCore GNAT compiler
-  - bar_codes_oa.prj     : project file for the PTC ObjectAda compiler
-  - ada_bar_codes.txt    : this file
+  - ada_bar_codes_gnat.gpr  : project file for the AdaCore GNAT compiler
+  - ada_bar_codes_oa.prj    : project file for the PTC ObjectAda compiler
+  - ada_bar_codes.txt       : this file
+  - bar_codes.ads           : package specification
+  - bar_codes.adb           : package body
+  - bar_codes-*             : private children packages (needed but not relevant for users)
+  - demo/bar_codes_demo.adb : demo procedure
+  - test/bar_codes_test.adb : test procedure (produces lots of files!)
 
 Warning & legal
 ===============
@@ -47,15 +48,15 @@ How to build Ada Bar Codes and its demo
 =======================================
 Here is how to build with GNAT/GCC:
 
-    - type "gprbuild -p -P bar_codes_gnat" in the command line
+    - type "gprbuild -P ada_bar_codes_gnat" in the command line
 or
-    - open the bar_codes_gnat.gpr file (will launch the GNAT Programming Studio (GPS)),
+    - open the ada_bar_codes_gnat.gpr file (will launch GNAT Studio),
       press F4 (Build)
 
 Here is how to build with ObjectAda (tested with v.9.2):
-    - open the bar_codes_oa.prj file, press F7 (Build)
+    - open the ada_bar_codes_oa.prj file, press F7 (Build)
 
-As a result there is a bar_codes_demo[.exe] executable.
+The project builds bar_codes_demo[.exe] and bar_codes_test[.exe].
   
 Thanks to...
 ============
@@ -65,6 +66,8 @@ Giuseppe Cannone, for the inspiration and advice.
 Jeffrey R. Carter, for the first implementation on raster graphics and as a Web service:
    https://github.com/jrcarter/Gnoga_Bar_Codes
 
+
+Nicolas Boulenguez, for numerous suggestions and improvements.
 
 On the Web
 ==========

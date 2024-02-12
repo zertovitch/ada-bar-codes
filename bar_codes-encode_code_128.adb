@@ -283,7 +283,7 @@ package body Bar_Codes.Encode_Code_128 is
       end;
     end loop;
     --  Extra bar after the Stop symbol; this gives the Reverse Stop symbol
-    --  when the bar code is scanned turned 180°.
+    --  when the bar code is scanned turned 180 degrees.
     x := code'Length * symbol_width;
     Bar (0, 2);
   end Draw;
