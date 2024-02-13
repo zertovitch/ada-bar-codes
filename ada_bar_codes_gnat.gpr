@@ -1,9 +1,10 @@
 --  This is a GNAT, GCC or GNAT Studio project file
 --  for the Ada Bar Codes project:
 --
---      home page:     http://ada-bar-codes.sf.net/
---      project page:  http://sf.net/projects/ada-bar-codes/
---      mirror:        https://github.com/zertovitch/ada-bar-codes
+--      Home page:     http://ada-bar-codes.sf.net/
+--      Project page:  http://sf.net/projects/ada-bar-codes/
+--      Mirror:        https://github.com/zertovitch/ada-bar-codes
+--      Alire crate:   https://alire.ada.dev/crates/bar_codes
 --
 --  Build me with "gprbuild -P ada_bar_codes_gnat", or "gnatmake -P ada_bar_codes_gnat",
 --  or open me with GNAT Studio
@@ -11,7 +12,7 @@
 project Ada_Bar_Codes_GNAT is
 
    type ABC_Build_Mode_Type is
-      ("Debug", 
+      ("Debug",
        "Fast");
 
    ABC_Build_Mode : ABC_Build_Mode_Type := external ("ABC_Build_Mode", "Debug");
@@ -36,7 +37,7 @@ project Ada_Bar_Codes_GNAT is
       when "Fast"  => for Object_Dir use "obj/fast";
    end case;
 
-   Common_Options :=
+   Compiler_Common_Options :=
      ("-gnatwaC",                       --  Warnings switches (a:turn on all info/warnings marked with +; C:turn off warnings for constant conditional)
       "-gnatwh",                        --  Warnings switches (h:turn on warnings for hiding declarations)
       "-gnatwijkmopruvz.c.n.p.t.w.x",   --  Warnings switches (run "gnatmake" for full list)
@@ -53,21 +54,24 @@ project Ada_Bar_Codes_GNAT is
       
    & Adaflags;
 
+   Compiler_Debug_Options :=
+     ("-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatVa") &
+     Compiler_Common_Options;
+
+   Compiler_Fast_Options :=
+     ("-Ofast", "-gnatn") &
+     Compiler_Common_Options;
+
    package Compiler is
-
       case ABC_Build_Mode is
-
          when "Debug" =>
             for Local_Configuration_Pragmas use project'Project_Dir & "gnat/debug.pra";
-            for Default_Switches ("ada") use Common_Options &
-              ("-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatVa");
-
+            for Default_Switches ("ada") use Compiler_Debug_Options;
          when "Fast" =>
-            for Default_Switches ("ada") use Common_Options &
-              ("-Ofast", "-gnatn");
+            for Default_Switches ("ada") use Compiler_Fast_Options;
       end case;
    end Compiler;
-   
+
    package Binder is
       --  -Es: Store tracebacks in exception occurrences, and enable symbolic tracebacks
       for Default_Switches ("ada") use ("-Es");
@@ -84,6 +88,6 @@ project Ada_Bar_Codes_GNAT is
          when "Debug" => for Switches ("Ada") use Ldflags;
          when others  => null;
       end case;
-   end Linker;  
- 
+   end Linker;
+
  end Ada_Bar_Codes_GNAT;
