@@ -6,10 +6,10 @@
 --      Mirror:        https://github.com/zertovitch/ada-bar-codes
 --      Alire crate:   https://alire.ada.dev/crates/bar_codes
 --
---  Build me with "gprbuild -P ada_bar_codes_gnat", or "gnatmake -P ada_bar_codes_gnat",
+--  Build me with "gprbuild -P ada_bar_codes", or "gnatmake -P ada_bar_codes",
 --  or open me with GNAT Studio
 --
-project Ada_Bar_Codes_GNAT is
+project Ada_Bar_Codes is
 
    type ABC_Build_Mode_Type is
       ("Debug",
@@ -90,4 +90,4 @@ project Ada_Bar_Codes_GNAT is
       end case;
    end Linker;
 
- end Ada_Bar_Codes_GNAT;
+ end Ada_Bar_Codes;

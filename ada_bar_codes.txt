@@ -28,7 +28,7 @@ Contents
   Ada Bar Codes
   =============
 
-  - ada_bar_codes_gnat.gpr  : project file for the AdaCore GNAT compiler
+  - ada_bar_codes.gpr       : project file for the AdaCore GNAT compiler
   - ada_bar_codes_oa.prj    : project file for the PTC ObjectAda compiler
   - ada_bar_codes.txt       : this file
   - bar_codes.ads           : package specification
@@ -50,11 +50,11 @@ How to build Ada Bar Codes and its demo
 =======================================
 Here is how to build with GNAT/GCC:
 
-    - type "gprbuild -P ada_bar_codes_gnat" in the command line
+    - type "gprbuild -P ada_bar_codes" in the command line
 or
-    - type "gnatmake -P ada_bar_codes_gnat" in the command line
+    - type "gnatmake -P ada_bar_codes" in the command line
 or
-    - open the ada_bar_codes_gnat.gpr file (will launch GNAT Studio),
+    - open the ada_bar_codes.gpr file (will launch GNAT Studio),
       press F4 (Build)
 
 Here is how to build with ObjectAda (tested with v.9.2):

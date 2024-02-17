@@ -1,1 +1,1 @@
-gprbuild -P ada_bar_codes_gnat %1
+gprbuild -P ada_bar_codes %1
