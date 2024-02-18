@@ -61,7 +61,7 @@ Here is how to build with ObjectAda (tested with v.9.2):
     - open the ada_bar_codes_oa.prj file, press F7 (Build)
 
 The project builds bar_codes_demo[.exe] and bar_codes_test[.exe].
-  
+
 Thanks to...
 ============
 

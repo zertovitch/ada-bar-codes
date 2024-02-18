@@ -28,7 +28,7 @@ project Ada_Bar_Codes is
    for Main use
      ("bar_codes_demo.adb",   --  Main demo
       "bar_codes_test.adb");  --  Tests
-   
+
    for Exec_Dir use ".";
    for Create_Missing_Dirs use "True";  --  Flips by default the "-p" switch
 
@@ -51,7 +51,7 @@ project Ada_Bar_Codes is
       "-gnatye",      --  Style: check e:end/exit labels present
       "-gnaty2",      --  Style: check indentation
       "-gnatyO")      --  Style: check O:check overriding indicators
-      
+
    & Adaflags;
 
    Compiler_Debug_Options :=
@@ -90,4 +90,4 @@ project Ada_Bar_Codes is
       end case;
    end Linker;
 
- end Ada_Bar_Codes;
+end Ada_Bar_Codes;
