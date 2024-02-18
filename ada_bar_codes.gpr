@@ -13,28 +13,45 @@ project Ada_Bar_Codes is
 
    type ABC_Build_Mode_Type is
       ("Debug",
-       "Fast");
+       "Fast",
+       "dynamic", "relocatable",  -- shared library (PIC)
+       "static",                  -- static library (non PIC)
+       "static-pic");             -- static library (PIC)
 
    ABC_Build_Mode : ABC_Build_Mode_Type := external ("ABC_Build_Mode", "Debug");
 
    Adaflags := External_As_List ("ADAFLAGS", " ");
    Ldflags  := External_As_List ("LDFLAGS", " ");
 
-   for Source_Dirs use
-     (".",      --  Library: Bar_Codes[.*]
-      "demo",   --  Demos
-      "test");  --  Tests
+   Library_Version := External ("ABC_Library_Version", "libada_bar_codes.so.1");
 
-   for Main use
-     ("bar_codes_demo.adb",   --  Main demo
-      "bar_codes_test.adb");  --  Tests
-
-   for Exec_Dir use ".";
    for Create_Missing_Dirs use "True";  --  Flips by default the "-p" switch
 
    case ABC_Build_Mode is
-      when "Debug" => for Object_Dir use "obj/debug";
-      when "Fast"  => for Object_Dir use "obj/fast";
+      when "Debug" | "Fast" =>
+         for Source_Dirs use
+           (".",      --  Library: Bar_Codes[.*]
+            "demo",   --  Demos
+            "test");  --  Tests
+         for Main use
+           ("bar_codes_demo.adb",   --  Main demo
+            "bar_codes_test.adb");  --  Tests
+         for Exec_Dir use ".";
+         for Object_Dir use "obj/" & ABC_Build_Mode;
+      when "dynamic" | "relocatable" =>
+         for Source_Dirs use (".");
+         for Library_Name use "ada_bar_codes";
+         for Library_Kind use "relocatable";
+         for Library_Version use Library_Version;
+         for Leading_Library_Options use Ldflags;
+         for Library_Dir use "obj/relocatable-lib";
+         for Object_Dir  use "obj/relocatable-obj";
+      when "static" | "static-pic" =>
+         for Source_Dirs use (".");
+         for Library_Name use "ada_bar_codes";
+         for Library_Kind use ABC_Build_Mode;
+         for Library_Dir use "obj/" & ABC_Build_Mode & "-lib";
+         for Object_Dir  use "obj/" & ABC_Build_Mode & "-obj";
    end case;
 
    Compiler_Common_Options :=
@@ -67,7 +84,7 @@ project Ada_Bar_Codes is
          when "Debug" =>
             for Local_Configuration_Pragmas use project'Project_Dir & "gnat/debug.pra";
             for Default_Switches ("ada") use Compiler_Debug_Options;
-         when "Fast" =>
+         when others =>
             for Default_Switches ("ada") use Compiler_Fast_Options;
       end case;
    end Compiler;
