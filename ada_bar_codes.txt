@@ -67,11 +67,12 @@ Thanks to...
 
 Giuseppe Cannone, for the inspiration and advice.
 
-Jeffrey R. Carter, for the first implementation on raster graphics and as a Web service:
-   https://github.com/jrcarter/Gnoga_Bar_Codes
+Jeffrey R. Carter, for the first implementation on raster graphics
+  and as a Web service: https://github.com/jrcarter/Gnoga_Bar_Codes
 
 
-Nicolas Boulenguez, for numerous suggestions and improvements.
+Nicolas Boulenguez <nicolas@debian.org>,
+  for numerous suggestions and improvements.
 
 On the Web
 ==========
