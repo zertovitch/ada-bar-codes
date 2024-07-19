@@ -10,7 +10,7 @@
 
 --  Legal licensing note:
 
---   Copyright (c) 2018 .. 2021 Gautier de Montmollin
+--   Copyright (c) 2018 .. 2024 Gautier de Montmollin
 
 --   Permission is hereby granted, free of charge, to any person obtaining a copy
 --   of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,6 @@
 --  (*) All Trademarks mentioned are properties of their respective owners.
 -------------------------------------------------------------------------------------
 
-with System;
-
 package Bar_Codes is
 
   type Kind_Of_Code is
@@ -61,14 +59,14 @@ package Bar_Codes is
   subtype Code_2D is Code_QR;
   subtype Code_2D_Square is Code_QR;
 
-  type Real is digits System.Max_Digits;
+  type Real is digits 15;
 
   type Box is record left, bottom, width, height : Real; end record;
 
   -------------------------------------------------------------
   --  Here is what you need to implement the bar code on     --
-  --  any device. For examples, see the PDF, SVG or PBM      --
-  --  that are implemented in the package Bar_Codes.Impl .   --
+  --  any device. For an example, see the PDF, SVG or PBM    --
+  --  implementations in the package Bar_Codes.Impl .        --
   --                                                         --
   --  Bar_Code is the main type around bar code generation.  --
   --  The rendering of the bars is abstracted.               --
@@ -76,8 +74,8 @@ package Bar_Codes is
 
   type Bar_Code is abstract tagged private;
 
-  --  Set_Bounding_Box is useful only for vector graphics such as PDF or SVG
-  --  (see those implementations to see why).
+  --  Set_Bounding_Box is useful only for a vector graphics implementation
+  --  such as PDF or SVG (see those implementations in Bar_Codes.Impl to see why).
   --
   procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
 
@@ -93,12 +91,13 @@ package Bar_Codes is
   --  The Fitting function will return the exact box, in terms of modules, needed
   --  to fit the bar code for a given text. Fitting.left = Fitting.bottom = 0.
   --  For 1D codes Fitting.height = 1.
+  --  This function is helpful to calibrate a raster graphics bitmap.
   --
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box;
 
-  --  Callback method for filling a black bar (on PDF, SVG, etc.)
-  --  For raster graphics, the shape variable can be used for pixel coordinates
-  --  or possibly integer multiples of them. If multiples are not integers,
+  --  Callback method for filling a black bar (on PDF, SVG, etc.).
+  --  For raster graphics, the shape parameter can be used for pixel coordinates
+  --  or possibly integer multiples of them. If multiples were not integers,
   --  the bar codes would be wrong on raster graphics.
   --
   procedure Filled_Rectangle (bc : Bar_Code; shape : Module_Box) is abstract;
@@ -122,7 +121,7 @@ package Bar_Codes is
 
   title     : constant String := "Ada Bar Codes";
   version   : constant String := "002";
-  reference : constant String := "19-Oct-2021";
+  reference : constant String := "19-Jul-2024";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
 

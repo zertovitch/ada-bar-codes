@@ -2,9 +2,13 @@ with Ada.Strings.Unbounded;             use Ada.Strings.Unbounded;
 
 package body Bar_Codes.Impl is
 
+  --------------------
+  --  PDF_Bar_Code  --
+  --------------------
+
   function PDF_Bar_Code
     (kind     : Kind_Of_Code;
-     bounding : Box;           --  Box in which the bar code should fit
+     bounding : Box;           --  Box in the PDF page containing the bar
      text     : String)        --  Text to encode
   return String
   is
@@ -44,9 +48,13 @@ package body Bar_Codes.Impl is
       "%  End of bar code" & ASCII.LF;
   end PDF_Bar_Code;
 
+  --------------------
+  --  SVG_Bar_Code  --
+  --------------------
+
   function SVG_Bar_Code
     (kind          : Kind_Of_Code;
-     width, height : Real;
+     width, height : Real;          --  Dimensions of the SVG bar code image
      unit          : String;        --  Length unit, for instance "mm" for millimeter
      text          : String)        --  Text to encode
   return String
@@ -87,9 +95,13 @@ package body Bar_Codes.Impl is
       "<!--  End of bar code  -->" & ASCII.LF;
   end SVG_Bar_Code;
 
+  --------------------
+  --  PBM_Bar_Code  --
+  --------------------
+
   function PBM_Bar_Code
     (kind             : Kind_Of_Code;
-     scale_x, scale_y : Positive;
+     scale_x, scale_y : Positive;      --  Scaling factors for the bitmap rendering
      text             : String)        --  Text to encode
   return String
   is
