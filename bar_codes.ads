@@ -40,23 +40,23 @@ with System;
 
 package Bar_Codes is
 
-  type Kind_Of_Code is (
-    --
-    --  Code 128 is a 1D bar code that can encode the first 128 ASCII characters.
-    --  Standard: ISO/IEC 15417:2007.
-    --
-    Code_128,
-    --
-    --  QR Code is a popular 2D bar code.
-    --  Standard: ISO/IEC 18004:2015.
-    --
-    Code_QR_Low,        --  Level L (Low)       7% of codewords can be restored.
-    Code_QR_Medium,     --  Level M (Medium)   15% of codewords can be restored.
-    Code_QR_Quartile,   --  Level Q (Quartile) 25% of codewords can be restored.
-    Code_QR_High        --  Level H (High)     30% of codewords can be restored.
-  );
+  type Kind_Of_Code is
+     --
+     --  Code 128 is a 1D bar code that can encode the first 128 ASCII characters.
+     --  Standard: ISO/IEC 15417:2007.
+     --
+    (Code_128,
+     --
+     --  QR Code is a popular 2D bar code.
+     --  Standard: ISO/IEC 18004:2015.
+     --
+     Code_QR_Low,        --  Level L (Low)       7% of codewords can be restored.
+     Code_QR_Medium,     --  Level M (Medium)   15% of codewords can be restored.
+     Code_QR_Quartile,   --  Level Q (Quartile) 25% of codewords can be restored.
+     Code_QR_High);      --  Level H (High)     30% of codewords can be restored.
 
   subtype Code_1D is Kind_Of_Code range Code_128 .. Code_128;
+
   subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
   subtype Code_2D is Code_QR;
   subtype Code_2D_Square is Code_QR;
@@ -67,8 +67,8 @@ package Bar_Codes is
 
   -------------------------------------------------------------
   --  Here is what you need to implement the bar code on     --
-  --  another device than PDF, SVG or PBM that are           --
-  --  implemented in the package Bar_Codes.Impl .            --
+  --  any device. For examples, see the PDF, SVG or PBM      --
+  --  that are implemented in the package Bar_Codes.Impl .   --
   --                                                         --
   --  Bar_Code is the main type around bar code generation.  --
   --  The rendering of the bars is abstracted.               --
@@ -76,8 +76,8 @@ package Bar_Codes is
 
   type Bar_Code is abstract tagged private;
 
-  --  Set_Bounding_Box is useful only for vector graphics such as PDF or SVG (see those
-  --  implementations to see why).
+  --  Set_Bounding_Box is useful only for vector graphics such as PDF or SVG
+  --  (see those implementations to see why).
   --
   procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
 
@@ -98,8 +98,8 @@ package Bar_Codes is
 
   --  Callback method for filling a black bar (on PDF, SVG, etc.)
   --  For raster graphics, the shape variable can be used for pixel coordinates
-  --  or eventually integer multiples of them. If multiples are not integral,
-  --  the bar codes will be wrong.
+  --  or possibly integer multiples of them. If multiples are not integers,
+  --  the bar codes would be wrong on raster graphics.
   --
   procedure Filled_Rectangle (bc : Bar_Code; shape : Module_Box) is abstract;
 

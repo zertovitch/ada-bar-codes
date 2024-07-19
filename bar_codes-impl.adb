@@ -2,16 +2,16 @@ with Ada.Strings.Unbounded;             use Ada.Strings.Unbounded;
 
 package body Bar_Codes.Impl is
 
-  function PDF_Bar_Code (
-    kind     : Kind_Of_Code;
-    bounding : Box;           --  Box in which the bar code should fit
-    text     : String         --  Text to encode
-  )
+  function PDF_Bar_Code
+    (kind     : Kind_Of_Code;
+     bounding : Box;           --  Box in which the bar code should fit
+     text     : String)        --  Text to encode
   return String
   is
     pdf_code : Unbounded_String;
     --
     type PDF_BC is new Bar_Code with null record;
+    --
     overriding procedure Filled_Rectangle (bc : PDF_BC; shape : Module_Box) is
     begin
       pdf_code := pdf_code &
@@ -44,17 +44,17 @@ package body Bar_Codes.Impl is
       "%  End of bar code" & ASCII.LF;
   end PDF_Bar_Code;
 
-  function SVG_Bar_Code (
-    kind          : Kind_Of_Code;
-    width, height : Real;
-    unit          : String;        --  Length unit, for instance "mm" for millimeter
-    text          : String         --  Text to encode
-  )
+  function SVG_Bar_Code
+    (kind          : Kind_Of_Code;
+     width, height : Real;
+     unit          : String;        --  Length unit, for instance "mm" for millimeter
+     text          : String)        --  Text to encode
   return String
   is
     svg_code : Unbounded_String;
     --
     type SVG_BC is new Bar_Code with null record;
+    --
     overriding procedure Filled_Rectangle (bc : SVG_BC; shape : Module_Box) is
     begin
       svg_code := svg_code &
@@ -87,11 +87,10 @@ package body Bar_Codes.Impl is
       "<!--  End of bar code  -->" & ASCII.LF;
   end SVG_Bar_Code;
 
-  function PBM_Bar_Code (
-    kind             : Kind_Of_Code;
-    scale_x, scale_y : Positive;
-    text             : String         --  Text to encode
-  )
+  function PBM_Bar_Code
+    (kind             : Kind_Of_Code;
+     scale_x, scale_y : Positive;
+     text             : String)        --  Text to encode
   return String
   is
     type Bit is range 0 .. 1;
@@ -104,6 +103,7 @@ package body Bar_Codes.Impl is
     pbm_i : Positive := 1;
     --
     type PBM_BC is new Bar_Code with null record;
+    --
     overriding procedure Filled_Rectangle (bc : PBM_BC; shape : Module_Box) is
     pragma Unreferenced (bc);
     begin
