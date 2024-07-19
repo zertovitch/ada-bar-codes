@@ -18,7 +18,7 @@ package Bar_Codes.Impl is
 
   function PDF_Bar_Code
     (kind     : Kind_Of_Code;
-     bounding : Box;           --  Box in the PDF page containing the bar
+     bounding : Box;           --  Box in the PDF page, containing the bar code
      text     : String)        --  Text to encode
   return String;
 
@@ -50,7 +50,7 @@ package Bar_Codes.Impl is
   --  NB:
   --    - On some screens or other devices, pixels are not square.
   --    - Modules of certain 2D bar codes (such as QR) are best rendered square.
-  --    - Consequently, for 2D bar codes, scale_x = scale_y is not automatically
-  --        appropriate.
+  --    - Consequently, for such 2D bar codes, setting scale_x = scale_y is not
+  --        automatically appropriate. Check the device's aspect ratio.
 
 end Bar_Codes.Impl;

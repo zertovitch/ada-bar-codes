@@ -8,7 +8,7 @@ package body Bar_Codes.Impl is
 
   function PDF_Bar_Code
     (kind     : Kind_Of_Code;
-     bounding : Box;           --  Box in the PDF page containing the bar
+     bounding : Box;           --  Box in the PDF page, containing the bar code
      text     : String)        --  Text to encode
   return String
   is
