@@ -6,6 +6,18 @@
 --    - PBM_Bar_Code : PBM bitmap image as an example of raster graphics  --
 --                                                                        --
 ----------------------------------------------------------------------------
+--
+--  NB: vector graphics and raster graphics are fundamentally different
+--      regarding the production of bar codes:
+--
+--        -  On vector graphics, lengths are arbitrarily divisible. So it
+--           is possible to define a rectangle and let Bar_Codes
+--           fill that rectangle with the bar code.
+--
+--        -  On raster graphics, the bar code generator needs to produce integer
+--           amounts of pixels. The only freedom is the scaling (an integer amount
+--           as well).
+--           See the remark below the function PBM_Bar_Code for more details.
 
 package Bar_Codes.Impl is
 
@@ -50,7 +62,7 @@ package Bar_Codes.Impl is
   --  NB:
   --    - On some screens or other devices, pixels are not square.
   --    - Modules of certain 2D bar codes (such as QR) are best rendered square.
-  --    - Consequently, for such 2D bar codes, setting scale_x = scale_y is not
-  --        automatically appropriate. Check the device's aspect ratio.
+  --    - Consequently, for such 2D bar codes, scale_x = scale_y is not
+  --        automatically the appropriate setting. Check the device's aspect ratio.
 
 end Bar_Codes.Impl;

@@ -2,8 +2,8 @@ Intro to Ada Bar Codes
 ======================
 
 The project Ada Bar Codes provides a package for generating
-various types of bar codes on different output formats,
-such as PDF, SVG or bitmaps.
+various types of bar codes, including 2D bar codes like the QR code,
+on different output formats, such as PDF, SVG or bitmaps.
 
 The creation of a bar code is as simple as this small procedure:
 
@@ -15,7 +15,7 @@ The creation of a bar code is as simple as this small procedure:
     use Bar_Codes, Bar_Codes.Impl;
     svg : File_Type;
   begin
-    Create (svg, Out_File, "bar_code.svg");
+    Create (svg, Out_File, "qr_code.svg");
     Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
     Put_Line (svg, SVG_Bar_Code (Code_QR_Low, 25.0, 25.0, "mm", "Hello"));
     Close (svg);
