@@ -1,4 +1,4 @@
-with Ada.Strings.Unbounded;             use Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded;
 
 package body Bar_Codes.Impl is
 
@@ -12,6 +12,7 @@ package body Bar_Codes.Impl is
      text     : String)        --  Text to encode
   return String
   is
+    use Ada.Strings.Unbounded;
     pdf_code : Unbounded_String;
     --
     type PDF_BC is new Bar_Code with null record;
@@ -36,7 +37,7 @@ package body Bar_Codes.Impl is
       " version " & Bar_Codes.version &
       ", " & Bar_Codes.reference & ASCII.LF &
       "%    Web: " & Bar_Codes.web & ASCII.LF &
-      "%    Bar code format: " & Bar_Codes.Kind_Of_Code'Image (kind) & ASCII.LF &
+      "%    Bar code format: " & kind'Image & ASCII.LF &
       "%    Text to be encoded: [" & Make_Printable (text) & ']' & ASCII.LF &
       "%    This PDF snippet has to be included into a PDF document." & ASCII.LF &
       "%    For instance, use Insert_Graphics_PDF_Code of PDF_Out, http://apdf.sf.net/" & ASCII.LF &
@@ -59,6 +60,7 @@ package body Bar_Codes.Impl is
      text          : String)        --  Text to encode
   return String
   is
+    use Ada.Strings.Unbounded;
     svg_code : Unbounded_String;
     --
     type SVG_BC is new Bar_Code with null record;
@@ -83,7 +85,7 @@ package body Bar_Codes.Impl is
       " version " & Bar_Codes.version &
       ", " & Bar_Codes.reference & "  -->" & ASCII.LF &
       "<!--      Web: " & Bar_Codes.web & "  -->" & ASCII.LF &
-      "<!--      Bar code format: " & Bar_Codes.Kind_Of_Code'Image (kind) & "  -->" & ASCII.LF &
+      "<!--      Bar code format: " & kind'Image & "  -->" & ASCII.LF &
       "<!--      Text to be encoded: [" & Make_Printable (text) & "]  -->" & ASCII.LF &
       "<svg height=""" & Img (height) & unit &
         """ width=""" & Img (width) & unit &
@@ -143,7 +145,7 @@ package body Bar_Codes.Impl is
       " version " & Bar_Codes.version &
       ", " & Bar_Codes.reference & ASCII.LF &
       "#      Web: " & Bar_Codes.web & ASCII.LF &
-      "#      Bar code format: " & Bar_Codes.Kind_Of_Code'Image (kind) & ASCII.LF &
+      "#      Bar code format: " & kind'Image & ASCII.LF &
       "#      Text to be encoded: [" & Make_Printable (text) & "]" & ASCII.LF &
       Integer'Image (bitmap'Length (1)) &
       Integer'Image (bitmap'Length (2)) & ASCII.LF &

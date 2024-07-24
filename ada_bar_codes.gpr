@@ -57,7 +57,7 @@ project Ada_Bar_Codes is
    Compiler_Common_Options :=
      ("-gnatwaC",                       --  Warnings switches (a:turn on all info/warnings marked with +; C:turn off warnings for constant conditional)
       "-gnatwh",                        --  Warnings switches (h:turn on warnings for hiding declarations)
-      "-gnatwijkmopruvz.c.n.p.t.w.x",   --  Warnings switches (run "gnatmake" for full list)
+      "-gnatwijkmopruvz.c.p.t.w.x",     --  Warnings switches (run "gnatmake" for full list)
       "-gnatf",  --  Full errors. Verbose details, all undefined references
       "-gnatq",  --  Don't quit, try semantics, even if parse errors
       "-gnatQ")  --  Don't quit, write ali/tree file even if compile errors
