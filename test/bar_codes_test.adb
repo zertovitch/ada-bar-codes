@@ -15,14 +15,20 @@ procedure Bar_Codes_Test is
     else
       Create (pbm, Out_File, prefix & file_name_part & ".pbm");
     end if;
-    case kind is
-      when Code_1D =>
-        --  1D modules are as high as you wish.
-        Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
-      when Code_2D_Square =>
-        --  Square 2D codes need square modules.
-        Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
-    end case;
+    if Code_2D_Square (kind) then
+      --  Square 2D codes need square modules.
+      Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+    else
+      case kind is
+        when Code_1D =>
+          --  1D modules are as high as you wish.
+          Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
+        when Code_DM_Rectangular =>
+          Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+        when others =>
+          pragma Assert (Code_2D_Square (kind));
+      end case;
+    end if;
     Close (pbm);
   end Spit;
   --
@@ -75,7 +81,7 @@ procedure Bar_Codes_Test is
     end loop;
   end Test_128;
   --
-  procedure Test_QR is
+  procedure Test_2D is
     blabla : constant String :=
       "The Corporate Bullshit Generator " &
       " *** " &
@@ -105,15 +111,15 @@ procedure Bar_Codes_Test is
       "Short description: GLOBE_3D is a free, open-source," &
       "real-time 3D Engine written in Ada, based on OpenGL.";
   begin
-    for c in Code_QR loop
+    for c in Code_2D loop
       Spit (c, "blabla 1",    blabla (1 .. 1));
       Spit (c, "blabla 10",   blabla (1 .. 10));
       Spit (c, "blabla 100",  blabla (1 .. 100));
       Spit (c, "blabla 500",  blabla (1 .. 500));
       Spit (c, "blabla full", blabla);
     end loop;
-  end Test_QR;
+  end Test_2D;
 begin
   Test_128;
-  Test_QR;
+  Test_2D;
 end Bar_Codes_Test;

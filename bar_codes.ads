@@ -45,7 +45,13 @@ package Bar_Codes is
      --
     (Code_128,
      --
-     --  QR Code is a popular 2D bar code.
+     --  Data Matrix is a 2D bar code popular for marking small items.
+     --  Standard: ISO/IEC 16022:2006
+     --
+     Code_DM_Rectangular,
+     Code_DM_Square,
+     --
+     --  QR (for "Quick Response") is a popular 2D bar code.
      --  Standard: ISO/IEC 18004:2015.
      --
      Code_QR_Low,        --  Level L (Low)       7% of codewords can be restored.
@@ -53,11 +59,17 @@ package Bar_Codes is
      Code_QR_Quartile,   --  Level Q (Quartile) 25% of codewords can be restored.
      Code_QR_High);      --  Level H (High)     30% of codewords can be restored.
 
-  subtype Code_1D is Kind_Of_Code range Code_128 .. Code_128;
+  --  Classify the bar codes by dimensions (1-dimensional or 2-dimensional):
+  --
+  subtype Code_1D is Kind_Of_Code range Kind_Of_Code'First .. Code_128;
+  subtype Code_2D is Kind_Of_Code range Code_DM_Rectangular .. Kind_Of_Code'Last;
 
+  --  Classify the bar codes by family (Data Matrix, QR, ...):
+  --
+  subtype Code_DM is Kind_Of_Code range Code_DM_Rectangular .. Code_DM_Square;
   subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
-  subtype Code_2D is Code_QR;
-  subtype Code_2D_Square is Code_QR;
+
+  function Code_2D_Square (kind : Kind_Of_Code) return Boolean is (kind in Code_DM_Square | Code_QR);
 
   type Real is digits 15;
 
@@ -120,10 +132,12 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "002";
-  reference : constant String := "19-Jul-2024";
+  version   : constant String := "003 Preview 1";
+  reference : constant String := "25-Jul-2024";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
+  --
+  --  There is a mirror too @ https://github.com/zertovitch/ada-bar-codes
 
 private
 

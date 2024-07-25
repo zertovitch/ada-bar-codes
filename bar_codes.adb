@@ -1,4 +1,5 @@
 with Bar_Codes.Encode_Code_128;
+with Bar_Codes.Encode_DM;
 with Bar_Codes.Encode_QR;
 
 with Ada.Text_IO;
@@ -17,20 +18,18 @@ package body Bar_Codes is
   procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; text : String) is
   begin
     case kind is
-      when Code_128 =>
-        Bar_Codes.Encode_Code_128.Draw (bc, text);
-      when Code_QR =>
-        Bar_Codes.Encode_QR.Draw (bc, text, kind);
+      when Code_128 => Bar_Codes.Encode_Code_128.Draw (bc, text);
+      when Code_DM  => Bar_Codes.Encode_DM.Draw (bc, text, kind);
+      when Code_QR  => Bar_Codes.Encode_QR.Draw (bc, text, kind);
     end case;
   end Draw;
 
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box is
   begin
     case kind is
-      when Code_128 =>
-        return Bar_Codes.Encode_Code_128.Fitting (text);
-      when Code_QR =>
-        return Bar_Codes.Encode_QR.Fitting (text, kind);
+      when Code_128 => return Bar_Codes.Encode_Code_128.Fitting (text);
+      when Code_DM  => return Bar_Codes.Encode_DM.Fitting (text, kind);
+      when Code_QR  => return Bar_Codes.Encode_QR.Fitting (text, kind);
     end case;
   end Fitting;
 

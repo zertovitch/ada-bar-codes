@@ -1,7 +1,7 @@
 --
 --  QR Code generator library (Ada)
 --
---  Copyright (c) Gautier de Montmollin (Ada translation & maintenance)
+--  Copyright (c) Gautier de Montmollin (Ada translation & further development)
 --  http://ada-bar-codes.sf.net
 --  https://github.com/zertovitch/ada-bar-codes
 --
@@ -51,10 +51,8 @@ package body Bar_Codes.Encode_QR is
       end if;
     end if;
     if verbosity > 2 then
-      Put_Line (
-        "Get_Num_Raw_Data_Modules: result" & Integer'Image (result) &
-        " version" & QR_version'Image (ver)
-      );
+      Put_Line
+        ("Get_Num_Raw_Data_Modules: result" & result'Image & " version" & ver'Image);
     end if;
     return result;
   end Get_Num_Raw_Data_Modules;
@@ -64,20 +62,18 @@ package body Bar_Codes.Encode_QR is
   type QR_param is array (Error_Correction_Level, QR_version) of Positive;
 
   ECC_CODEWORDS_PER_BLOCK : constant QR_param := (
-    --  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
-       (7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30, 28, 28, 28, 28, 30, 30, 26, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30),  -- Low
-      (10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28),  -- Medium
-      (13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28, 28, 26, 30, 28, 30, 30, 30, 30, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30),  -- Quartile
-      (17, 28, 22, 16, 22, 28, 26, 26, 24, 28, 24, 28, 22, 24, 24, 30, 28, 28, 26, 28, 30, 24, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30)   -- High
-  );
+    --  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40     Error correction level
+       (7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30, 28, 28, 28, 28, 30, 30, 26, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30),   -- Low
+      (10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28),   -- Medium
+      (13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28, 28, 26, 30, 28, 30, 30, 30, 30, 28, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30),   -- Quartile
+      (17, 28, 22, 16, 22, 28, 26, 26, 24, 28, 24, 28, 22, 24, 24, 30, 28, 28, 26, 28, 30, 24, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30));  -- High
 
   NUM_ERROR_CORRECTION_BLOCKS : constant QR_param := (
-    --  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
-       (1, 1, 1, 1, 1, 2, 2, 2, 2, 4,  4,  4,  4,  4,  6,  6,  6,  6,  7,  8,  8,  9,  9, 10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25),  -- Low
-       (1, 1, 1, 2, 2, 4, 4, 4, 5, 5,  5,  8,  9,  9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49),  -- Medium
-       (1, 1, 2, 2, 4, 4, 6, 6, 8, 8,  8, 10, 12, 16, 12, 17, 16, 18, 21, 20, 23, 23, 25, 27, 29, 34, 34, 35, 38, 40, 43, 45, 48, 51, 53, 56, 59, 62, 65, 68),  -- Quartile
-       (1, 1, 2, 4, 4, 4, 5, 6, 8, 8, 11, 11, 16, 16, 18, 16, 19, 21, 25, 25, 25, 34, 30, 32, 35, 37, 40, 42, 45, 48, 51, 54, 57, 60, 63, 66, 70, 74, 77, 81)   -- High
-  );
+    --  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40     Error correction level
+       (1, 1, 1, 1, 1, 2, 2, 2, 2, 4,  4,  4,  4,  4,  6,  6,  6,  6,  7,  8,  8,  9,  9, 10, 12, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 24, 25),   -- Low
+       (1, 1, 1, 2, 2, 4, 4, 4, 5, 5,  5,  8,  9,  9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49),   -- Medium
+       (1, 1, 2, 2, 4, 4, 6, 6, 8, 8,  8, 10, 12, 16, 12, 17, 16, 18, 21, 20, 23, 23, 25, 27, 29, 34, 34, 35, 38, 40, 43, 45, 48, 51, 53, 56, 59, 62, 65, 68),   -- Quartile
+       (1, 1, 2, 4, 4, 4, 5, 6, 8, 8, 11, 11, 16, 16, 18, 16, 19, 21, 25, 25, 25, 34, 30, 32, 35, 37, 40, 42, 45, 48, 51, 54, 57, 60, 63, 66, 70, 74, 77, 81));  -- High
 
   --  Returns the number of 8-bit data (i.e. not error correction) codewords contained in any
   --  QR Code of the given version number and error correction level, with remainder bits discarded.
@@ -103,8 +99,7 @@ package body Bar_Codes.Encode_QR is
      ALPHANUMERIC => (2,  (9, 11, 13)),
      BYTE         => (4,  (8, 16, 16)),
      KANJI        => (8,  (8, 10, 12)),
-     ECI          => (7,  (0,  0,  0))
-    );
+     ECI          => (7,  (0,  0,  0)));
 
   function Get_border_size (test_version : QR_version) return Positive is
   begin
@@ -177,7 +172,7 @@ package body Bar_Codes.Encode_QR is
   function Num_Char_Count_Bits (seg_mode : Segment_mode; ver : QR_version) return Natural is
   begin
     case ver is
-      when 1 .. 9   => return segment_params (seg_mode).cc_bits (0);
+      when  1 ..  9 => return segment_params (seg_mode).cc_bits (0);
       when 10 .. 26 => return segment_params (seg_mode).cc_bits (1);
       when 27 .. 40 => return segment_params (seg_mode).cc_bits (2);
     end case;
@@ -237,10 +232,10 @@ package body Bar_Codes.Encode_QR is
       begin
         data_used_bits := Get_Total_Bits (segs, test_version);
         if verbosity > 2 then
-          Put_Line (
-            "Get_min_version: test QR version" & Integer'Image (test_version) &
-            " data_used_bits ="     & Integer'Image (data_used_bits) &
-            " data_capacity_bits =" & Integer'Image (data_capacity_bits));
+          Put_Line
+            ("Get_min_version: test QR version" & Integer'Image (test_version) &
+             " data_used_bits ="     & Integer'Image (data_used_bits) &
+             " data_capacity_bits =" & Integer'Image (data_capacity_bits));
         end if;
         if data_used_bits <= data_capacity_bits then
           return test_version;
@@ -327,24 +322,25 @@ package body Bar_Codes.Encode_QR is
         (Code_QR_Low        =>   LOW,
          Code_QR_Medium     =>   MEDIUM,
          Code_QR_Quartile   =>   QUARTILE,
-         Code_QR_High       =>   HIGH
-    );
+         Code_QR_High       =>   HIGH);
 
-  procedure Draw (bc : in out Bar_Code; text : String; qr_kind : Code_QR) is
+  procedure Draw (bc : in out Bar_Code; text : String; qr_kind : Code_QR)
+  is
     selected_ecl : constant Error_Correction_Level := qr_kind_to_ecl (qr_kind);
     min_version  : constant QR_version             := Get_min_version (selected_ecl, text);
     border_size  : constant Positive               := Get_border_size (min_version);
+
     --  Coordinates in the QR square:
-    subtype Module_range is Integer range 0 .. border_size - 1;
+    subtype Module_Range is Integer range 0 .. border_size - 1;
     --
     --  The grid y axis is top-down; coordinates are (y,x).
-    type Grid is array (Module_range, Module_range) of Boolean;
+    type Grid is array (Module_Range, Module_Range) of Boolean;
     --
     modules, is_function : Grid := (others => (others => False));
     --
     --  Sets the color of a module and marks it as a function module.
     --
-    procedure Set_Function_Module (x, y : Module_range; is_black : Boolean) is
+    procedure Set_Function_Module (x, y : Module_Range; is_black : Boolean) is
     begin
       modules (y, x)     := is_black;
       is_function (y, x) := True;  --  Cell is marked, be it black or white.
@@ -417,7 +413,7 @@ package body Bar_Codes.Encode_QR is
       --  7.3.2 - Draws a 7x7 finder pattern, plus the surrounding white
       --          border separator (7.3.3), with the center module at (x, y).
       --
-      procedure Draw_Finder_Pattern (x, y : Module_range) is
+      procedure Draw_Finder_Pattern (x, y : Module_Range) is
         dist, xx, yy : Integer;
       begin
         for dx in -4 .. 4 loop
@@ -425,7 +421,7 @@ package body Bar_Codes.Encode_QR is
             dist := Integer'Max (abs dx, abs dy);  --  Chebyshev / infinity norm
             xx := x + dx;
             yy := y + dy;
-            if xx in Module_range and then yy in Module_range then
+            if xx in Module_Range and then yy in Module_Range then
               Set_Function_Module (xx, yy, dist /= 2 and dist /= 4);
             end if;
           end loop;
@@ -436,7 +432,7 @@ package body Bar_Codes.Encode_QR is
       --
       procedure Draw_Alignment_Patterns is
         --  Draws a 5x5 alignment pattern, with the center module at (x, y).
-        procedure Draw_Alignment_Pattern (x, y : Module_range) is
+        procedure Draw_Alignment_Pattern (x, y : Module_Range) is
           dist : Integer;
         begin
           for dx in -2 .. 2 loop
@@ -486,7 +482,7 @@ package body Bar_Codes.Encode_QR is
         --  The Version Information is an 18 bit sequence containing 6 data bits, with 12 error
         --  correction bits calculated using the (18, 6) BCH code.
         data, bch : U16;
-        a, b : Module_range;
+        a, b : Module_Range;
         data_bit : Boolean;
       begin
         if min_version < 7 then
@@ -511,7 +507,7 @@ package body Bar_Codes.Encode_QR is
     begin
       --  7.3.4 - Draw horizontal and vertical timing
       --          patterns (dotted lines).
-      for i in Module_range loop
+      for i in Module_Range loop
         Set_Function_Module (6, i, i mod 2 = 0);
         Set_Function_Module (i, 6, i mod 2 = 0);
       end loop;
@@ -625,7 +621,7 @@ package body Bar_Codes.Encode_QR is
             right := 5;
           end if;
           upward := (U32 (right + 1) and 2) = 0;
-          for vert in Module_range loop
+          for vert in Module_Range loop
             for j in 0 .. 1 loop
               x := right - j;  --  Actual x coordinate
               --  Actual y coordinate:
@@ -662,8 +658,8 @@ package body Bar_Codes.Encode_QR is
       procedure Apply_mask (mask_ref : Mask_pattern_reference) is
         invert : Boolean;
       begin
-        for y in Module_range loop
-          for x in Module_range loop
+        for y in Module_Range loop
+          for x in Module_Range loop
             if not is_function (y, x) then
               case mask_ref is
                 when 0 => invert := (x + y) mod 2 = 0;
@@ -753,28 +749,60 @@ package body Bar_Codes.Encode_QR is
       end;
     end Draw_Data;
     --
-    procedure Output_to_media is
+    procedure Output_to_Media is
+      done : Grid := (others => (others => False));
+      size_x, size_y : Positive;
     begin
-      --  For vector graphics only: we need to squeeze the full 2D code
+      --  For vector graphics only: we want to squeeze the full 2D code
       --  into the bounding box. A "module" is the smallest square.
       bc.module_width  := bc.bounding.width / Real (border_size);
       bc.module_height := bc.bounding.height / Real (border_size);
       --
-      for y in Module_range loop
-        for x in Module_range loop
-          if modules (y, x) then
-            Filled_Rectangle (Bar_Code'Class (bc), (x, border_size - 1 - y, 1, 1));
+      for y in Module_Range loop
+        for x in Module_Range loop
+          if modules (y, x) and then not done (y, x) then
+            --  We search for the largest "black" rectangle starting from
+            --  the (y, x) point. On a vector graphics output, there are
+            --  two advantages:
+            --    - the output is much smaller (for SVG or PDF, the file
+            --        is typically reduced to 1/4 of the "uncompressed" size)
+            --    - many artefacts appearing between "black" modules are
+            --        removed; it is appearent when you zoom a SVG file
+            --        to the max on a Web browser.
+            size_x := 1;
+            size_y := 1;
+            --  Try to extend the square to the right:
+            for xh in x + 1 .. Module_Range'Last loop
+              exit when done (y, xh) or not modules (y, xh);
+              size_x := size_x + 1;
+            end loop;
+            --  Try to extend the rectangle vertically:
+            Vertical_Extension :
+            for yv in y + 1 .. Module_Range'Last loop
+              for xt in x .. x + size_x - 1 loop
+                exit Vertical_Extension when done (yv, xt) or not modules (yv, xt);
+              end loop;
+              size_y := size_y + 1;
+            end loop Vertical_Extension;
+            Filled_Rectangle
+              (Bar_Code'Class (bc), (x, border_size - size_y - y, size_x, size_y));
+            for yt in y .. y + size_y - 1 loop
+              for xt in x .. x + size_x - 1 loop
+                done (yt, xt) := True;
+              end loop;
+            end loop;
           end if;
         end loop;
       end loop;
-    end Output_to_media;
+    end Output_to_Media;
+    --
   begin
     if verbosity > 0 then
       Put_Line ("[QR code] version" & QR_version'Image (min_version));
     end if;
     Draw_Function_Patterns;
     Draw_Data;
-    Output_to_media;
+    Output_to_Media;
   end Draw;
 
   function Fitting (text : String; qr_kind : Code_QR) return Module_Box is

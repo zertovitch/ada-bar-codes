@@ -22,6 +22,8 @@
 package Bar_Codes.Impl is
 
   -----------------------------------------------------------------------------------
+  --  Vector Graphics - PDF                                                        --
+  -----------------------------------------------------------------------------------
   --  The PDF_Bar_Code function produces a PDF (Portable Document Format) snippet  --
   --  to be included into a PDF document. For instance, you can use                --
   --  Insert_Graphics_PDF_Code of package PDF_Out (project Ada PDF Writer,         --
@@ -35,6 +37,8 @@ package Bar_Codes.Impl is
   return String;
 
   -----------------------------------------------------------------------------------
+  --  Vector Graphics - SVG                                                        --
+  -----------------------------------------------------------------------------------
   --  The SVG_Bar_Code function produces a SVG (Scalable Vector Graphics) object.  --
   --  You can view directly a SVG image with most Web browsers, or include it in   --
   --  an HTML document.                                                            --
@@ -47,6 +51,8 @@ package Bar_Codes.Impl is
      text          : String)        --  Text to encode
   return String;
 
+  -------------------------------------------------------------------------------
+  --  Raster Graphics - PBM                                                    --
   -------------------------------------------------------------------------------
   --  The PBM_Bar_Code function produces a PBM (Portable BitMap) image.        --
   --  This simple image format is supported by GIMP ( https://www.gimp.org/ )  --

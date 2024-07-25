@@ -45,7 +45,7 @@ There is NO WARRANTY in this software. Read copyright notice in bar_codes.ads.
 Portability
 ===========
 This software can be compiled for any target machine, and with any compiler
-for Ada 2005 or later language versions.
+for Ada 2012 or later language versions.
 
 How to build Ada Bar Codes and its demo
 =======================================
@@ -70,7 +70,6 @@ Giuseppe Cannone, for the inspiration and advice.
 
 Jeffrey R. Carter, for the first implementation on raster graphics
   and as a Web service: https://github.com/jrcarter/Gnoga_Bar_Codes
-
 
 Nicolas Boulenguez <nicolas@debian.org>,
   for numerous suggestions and improvements.

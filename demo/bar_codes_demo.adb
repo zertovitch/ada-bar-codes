@@ -21,7 +21,8 @@ procedure Bar_Codes_Demo is
     Put_Line (svg, "  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>");
   end SVG_header;
   --
-  hello : constant String := "Hello from " & Bar_Codes.title & " ( " & Bar_Codes.web & " ) !";
+  hello : constant String :=
+    "Hello from " & Bar_Codes.title & " ( " & Bar_Codes.web & " ) ! 1234567890";
   --
   procedure Demo_Code_128 is
     use Bar_Codes, Bar_Codes.Impl;
@@ -57,7 +58,21 @@ procedure Bar_Codes_Demo is
     Close (pbm);
   end Demo_QR;
   --
+  procedure Demo_DM is
+    use Bar_Codes, Bar_Codes.Impl;
+  begin
+    Create (svg, Out_File, "dm_code.svg");
+    SVG_header;
+    Put_Line (svg, SVG_Bar_Code (Code_DM_Square, 23.0, 23.0, "mm", hello));
+    Close (svg);
+    --
+    Create (pbm, Out_File, "dm_code.pbm");
+    Put_Line (pbm, PBM_Bar_Code (Code_DM_Rectangular, 3, 3, hello));
+    Close (pbm);
+  end Demo_DM;
+  --
 begin
   Demo_Code_128;
   Demo_QR;
+  Demo_DM;
 end Bar_Codes_Demo;
