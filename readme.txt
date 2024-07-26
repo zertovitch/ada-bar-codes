@@ -14,7 +14,6 @@ The creation of a bar code is as simple as this small procedure:
     svg : File_Type;
   begin
     Create (svg, Out_File, "qr_code.svg");
-    Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
     Put_Line
       (svg,
        Bar_Codes.Impl.SVG_Bar_Code

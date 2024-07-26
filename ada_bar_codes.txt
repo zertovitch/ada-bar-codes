@@ -14,7 +14,6 @@ The creation of a bar code is as simple as this small procedure:
     svg : File_Type;
   begin
     Create (svg, Out_File, "qr_code.svg");
-    Put_Line (svg, "<?xml version=""1.0"" encoding=""UTF-8""?>");
     Put_Line
       (svg,
        Bar_Codes.Impl.SVG_Bar_Code
@@ -30,11 +29,12 @@ Contents
   =============
 
   - ada_bar_codes.gpr       : project file for the AdaCore GNAT compiler
-  - ada_bar_codes_oa.prj    : project file for the PTC ObjectAda compiler
+  - ada_bar_codes.prj       : project file for the PTC ObjectAda compiler
   - ada_bar_codes.txt       : this file
   - bar_codes.ads           : package specification
   - bar_codes.adb           : package body
-  - bar_codes-*             : private children packages (needed but not relevant for users)
+  - bar_codes-impl.ad*      : a few simple implementations for the SVG, PDF, PBM formats
+  - bar_codes-encode*       : private children packages (needed but not relevant for users)
   - demo/bar_codes_demo.adb : demo procedure
   - test/bar_codes_test.adb : test procedure (produces lots of files!)
 
