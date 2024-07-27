@@ -78,7 +78,7 @@ package Bar_Codes is
   -------------------------------------------------------------
   --  Here is what you need to implement the bar code on     --
   --  any device. For an example, see the PDF, SVG or PBM    --
-  --  implementations in the package Bar_Codes.Impl .        --
+  --  implementations in the package Bar_Codes.Media .        --
   --                                                         --
   --  Bar_Code is the main type around bar code generation.  --
   --  The rendering of the bars is abstracted.               --
@@ -87,11 +87,15 @@ package Bar_Codes is
   type Bar_Code is abstract tagged private;
 
   --  Set_Bounding_Box is useful only for a vector graphics implementation
-  --  such as PDF or SVG (see those implementations in Bar_Codes.Impl to see why).
+  --  such as PDF or SVG (see those implementations in Bar_Codes.Media to see why).
   --
   procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
 
   procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; text : String);
+
+  ---------------
+  --  Modules  --
+  ---------------
 
   --  A "module" is the thinnest bar (1D), or the smallest box (2D).
   --  The coordinates of a Module_Box are in "module" units.
@@ -106,6 +110,9 @@ package Bar_Codes is
   --  This function is helpful to calibrate a raster graphics bitmap.
   --
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box;
+
+  function Get_Module_Width (bc : Bar_Code) return Real;
+  function Get_Module_Height (bc : Bar_Code) return Real;
 
   --  Callback method for filling a black bar (on PDF, SVG, etc.).
   --  For raster graphics, the shape parameter can be used for pixel coordinates
@@ -132,8 +139,8 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "003 Preview 1";
-  reference : constant String := "25-Jul-2024";
+  version   : constant String := "003";
+  reference : constant String := "27-Jul-2024";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
   --
@@ -147,7 +154,17 @@ private
     module_height : Real;
   end record;
 
-  verbosity : constant Natural := 0;
+  --  Facilities for 2D bar codes
+
+  type Grid is array (Natural range <>, Natural range <>) of Boolean;
+
+  procedure Output_to_Media
+    (bc            : in out Bar_Code'Class;
+     border_size_x : in     Positive;
+     border_size_y : in     Positive;
+     module        : in     Grid);
+
+  verbosity_level : constant Natural := 0;
 
   --  Controls diagnostic/debug output during all operations.
   --

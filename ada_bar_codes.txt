@@ -7,20 +7,19 @@ on different output formats, such as PDF, SVG or bitmaps.
 
 The creation of a bar code is as simple as this small procedure:
 
-  with Ada.Text_IO, Bar_Codes.Impl;
+    with Ada.Text_IO, Bar_Codes, Bar_Codes_Media;
 
-  procedure Small_Demo is
-    use Ada.Text_IO, Bar_Codes;
-    svg : File_Type;
-  begin
-    Create (svg, Out_File, "qr_code.svg");
-    Put_Line
-      (svg,
-       Bar_Codes.Impl.SVG_Bar_Code
-         (Code_QR_Low, 25.0, 25.0, "mm", "Hello"));
-    Close (svg);
-  end Small_Demo;
-
+    procedure Small_Demo is
+      use Ada.Text_IO;
+      svg : File_Type;
+    begin
+      Create (svg, Out_File, "qr_code.svg");
+      Put_Line
+        (svg,
+         Bar_Codes_Media.SVG_Bar_Code
+           (Bar_Codes.Code_QR_Low, 100.0, 100.0, "mm", "Hello"));
+      Close (svg);
+    end Small_Demo;
 
 Contents
 ========
@@ -33,8 +32,8 @@ Contents
   - ada_bar_codes.txt       : this file
   - bar_codes.ads           : package specification
   - bar_codes.adb           : package body
-  - bar_codes-impl.ad*      : a few simple implementations for the SVG, PDF, PBM formats
   - bar_codes-encode*       : private children packages (needed but not relevant for users)
+  - bar_codes_media.ad*     : a few simple implementations examples for the SVG, PDF, PBM formats
   - demo/bar_codes_demo.adb : demo procedure
   - test/bar_codes_test.adb : test procedure (produces lots of files!)
 

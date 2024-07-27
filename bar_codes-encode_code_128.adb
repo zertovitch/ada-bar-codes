@@ -10,7 +10,7 @@ package body Bar_Codes.Encode_Code_128 is
 
   type Sequence is array (Positive range <>) of Code_Range;
 
-  function Compose_code (text : String) return Sequence is
+  function Compose_Code (text : String) return Sequence is
     --  Worst case: we switch subcode for each symbol!
     max_length  : constant Integer := text'Length * 2 + 2;
     code        : Sequence (1 .. max_length);
@@ -51,8 +51,8 @@ package body Bar_Codes.Encode_Code_128 is
         first_digit := True;
       end if;
       subcode := new_subcode;
-      if verbosity > 0 then
-        Ada.Text_IO.Put_Line ("[Code 128] switched to subcode " & Code_128_subcode'Image (subcode));
+      if verbosity_level > 0 then
+        Ada.Text_IO.Put_Line ("[Code 128] switched to subcode " & subcode'Image);
       end if;
     end Switch_to;
     --
@@ -131,7 +131,7 @@ package body Bar_Codes.Encode_Code_128 is
     Add_symbol (106);
     --
     return code (1 .. code_length);
-  end Compose_code;
+  end Compose_Code;
 
   --  Here begins the graphics part.
   --  Each symbol drawn as a succession of bar, space, bar, space, bar, space.
@@ -140,10 +140,10 @@ package body Bar_Codes.Encode_Code_128 is
   stop_extra_width : constant :=  2;  --  Supplemental bar after stop symbol.
 
   procedure Draw (bc : in out Bar_Code; text : String) is
-    code : constant Sequence := Compose_code (text);
+    code : constant Sequence := Compose_Code (text);
     --
-    type Width_sequence is array (1 .. 5) of Positive;
-    widths : constant array (Code_Range) of Width_sequence :=
+    type Width_Sequence is array (1 .. 5) of Positive;
+    widths : constant array (Code_Range) of Width_Sequence :=
       --  These are the widths for:  bar, space, bar, space, bar (last space width is implicit).
       (
           0 => (2, 1, 2, 2, 2),
@@ -258,13 +258,12 @@ package body Bar_Codes.Encode_Code_128 is
     --
     procedure Bar (offset, width : Natural) is
     begin
-      Filled_Rectangle (
-        Bar_Code'Class (bc),  --  Will use the concrete child method for displaying a rectangle
-          (left   => x + offset,
-           bottom => 0,
-           width  => width,
-           height => 1)
-      );
+      Filled_Rectangle
+        (Bar_Code'Class (bc),  --  Will use the concrete child method for displaying a rectangle
+           (left   => x + offset,
+            bottom => 0,
+            width  => width,
+            height => 1));
     end Bar;
   begin
     --  For vector graphics only: we need to squeeze the full 2D code
@@ -275,7 +274,7 @@ package body Bar_Codes.Encode_Code_128 is
     for i in code'Range loop
       x := (i - 1) * symbol_width;
       declare
-        ws : constant Width_sequence := widths (code (i));
+        ws : constant Width_Sequence := widths (code (i));
       begin
         Bar (0,                                 ws (1));
         Bar (ws (1) + ws (2),                   ws (3));
@@ -289,9 +288,6 @@ package body Bar_Codes.Encode_Code_128 is
   end Draw;
 
   function Fitting (text : String) return Module_Box is
-    code : constant Sequence := Compose_code (text);
-  begin
-    return (0, 0, code'Length * symbol_width + stop_extra_width, 1);
-  end Fitting;
+  (0, 0, Compose_Code (text)'Length * symbol_width + stop_extra_width, 1);
 
 end Bar_Codes.Encode_Code_128;

@@ -19,7 +19,9 @@
 --           as well).
 --           See the remark below the function PBM_Bar_Code for more details.
 
-package Bar_Codes.Impl is
+with Bar_Codes;
+
+package Bar_Codes_Media is
 
   -----------------------------------------------------------------------------------
   --  Vector Graphics - PDF                                                        --
@@ -31,9 +33,9 @@ package Bar_Codes.Impl is
   -----------------------------------------------------------------------------------
 
   function PDF_Bar_Code
-    (kind     : Kind_Of_Code;
-     bounding : Box;           --  Box in the PDF page, containing the bar code
-     text     : String)        --  Text to encode
+    (kind     : Bar_Codes.Kind_Of_Code;
+     bounding : Bar_Codes.Box;  --  Box in the PDF page, containing the bar code
+     text     : String)         --  Text to encode
   return String;
 
   -----------------------------------------------------------------------------------
@@ -45,10 +47,10 @@ package Bar_Codes.Impl is
   -----------------------------------------------------------------------------------
 
   function SVG_Bar_Code
-    (kind          : Kind_Of_Code;
-     width, height : Real;          --  Dimensions of the SVG bar code image
-     unit          : String;        --  Length unit, for instance "mm" for millimeter
-     text          : String)        --  Text to encode
+    (kind          : Bar_Codes.Kind_Of_Code;
+     width, height : Bar_Codes.Real;  --  Dimensions of the SVG bar code image
+     unit          : String;          --  Length unit, for instance "mm" for millimeter
+     text          : String)          --  Text to encode
   return String;
 
   -------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ package Bar_Codes.Impl is
   -------------------------------------------------------------------------------
 
   function PBM_Bar_Code
-    (kind             : Kind_Of_Code;
+    (kind             : Bar_Codes.Kind_Of_Code;
      scale_x, scale_y : Positive;      --  Scaling factors for the bitmap rendering
      text             : String)        --  Text to encode
   return String;
@@ -71,4 +73,4 @@ package Bar_Codes.Impl is
   --    - Consequently, for such 2D bar codes, scale_x = scale_y is not
   --        automatically the appropriate setting. Check the device's aspect ratio.
 
-end Bar_Codes.Impl;
+end Bar_Codes_Media;

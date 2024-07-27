@@ -1,14 +1,16 @@
-with Bar_Codes.Impl;                    use Bar_Codes, Bar_Codes.Impl;
+with Ada.Characters.Handling;
+with Ada.Numerics.Float_Random;
+with Ada.Text_IO;
 
-with Ada.Characters.Handling;           use Ada.Characters.Handling;
-with Ada.Numerics.Float_Random;         use Ada.Numerics.Float_Random;
-with Ada.Text_IO;                       use Ada.Text_IO;
+with Bar_Codes, Bar_Codes_Media;
 
 procedure Bar_Codes_Test is
+  use Ada.Text_IO, Bar_Codes, Bar_Codes_Media;
   --
   procedure Spit (kind : Kind_Of_Code; file_name_part, text : String) is
+    use Ada.Characters.Handling;
     pbm : File_Type;
-    prefix : constant String := "test " & To_Lower (Kind_Of_Code'Image (kind)) & ' ';
+    prefix : constant String := "test " & To_Lower (kind'Image) & ' ';
   begin
     if file_name_part = "" then
       Create (pbm, Out_File, prefix & text & ".pbm");
@@ -33,6 +35,7 @@ procedure Bar_Codes_Test is
   end Spit;
   --
   procedure Test_128 is
+    use Ada.Numerics.Float_Random;
     chunks : constant := 2;
     c : Character := ASCII.DEL;
     msg : String (1 .. 128 / chunks);
@@ -47,7 +50,7 @@ procedure Bar_Codes_Test is
           c := Character'Pred (c);
         end if;
       end loop;
-      Spit (Code_128, "test code 128" & Integer'Image (chunk), msg);
+      Spit (Code_128, "test code 128" & chunk'Image, msg);
     end loop;
     Spit (Code_128, "vn1", "0520");
     Spit (Code_128, "vn2", "993512176004535560");
@@ -72,12 +75,12 @@ procedure Bar_Codes_Test is
           end loop;
         end if;
       end loop;
-      Spit (Code_128, "rnd" & Integer'Image (iter), rnd);
+      Spit (Code_128, "rnd" & iter'Image, rnd);
       --  Digits only (must be all with subcode C):
       for i in rnd'Range loop
         rnd (i) := Character'Val (Character'Pos ('0') + Integer (Random (gen) * 9.0));
       end loop;
-      Spit (Code_128, "rnd digits" & Integer'Image (iter), rnd);
+      Spit (Code_128, "rnd digits" & iter'Image, rnd);
     end loop;
   end Test_128;
   --

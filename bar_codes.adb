@@ -25,13 +25,64 @@ package body Bar_Codes is
   end Draw;
 
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box is
+  (case kind is
+     when Code_128 => Bar_Codes.Encode_Code_128.Fitting (text),
+     when Code_DM  => Bar_Codes.Encode_DM.Fitting (text, kind),
+     when Code_QR  => Bar_Codes.Encode_QR.Fitting (text, kind));
+
+  function Get_Module_Width (bc : Bar_Code) return Real is (bc.module_width);
+  function Get_Module_Height (bc : Bar_Code) return Real is (bc.module_height);
+
+  procedure Output_to_Media
+    (bc            : in out Bar_Code'Class;
+     border_size_x : in     Positive;
+     border_size_y : in     Positive;
+     module        : in     Grid)
+  is
+    done : Grid (0 .. border_size_y - 1, 0 .. border_size_x - 1) := (others => (others => False));
+    size_x, size_y : Positive;
   begin
-    case kind is
-      when Code_128 => return Bar_Codes.Encode_Code_128.Fitting (text);
-      when Code_DM  => return Bar_Codes.Encode_DM.Fitting (text, kind);
-      when Code_QR  => return Bar_Codes.Encode_QR.Fitting (text, kind);
-    end case;
-  end Fitting;
+    --  For vector graphics only: we want to squeeze the full 2D code
+    --  into the bounding box. A "module" is the smallest square.
+    bc.module_width  := bc.bounding.width / Real (border_size_x);
+    bc.module_height := bc.bounding.height / Real (border_size_y);
+    --
+    for y in done'Range (1) loop
+      for x in done'Range (2) loop
+        if module (y, x) and then not done (y, x) then
+          --  We search for the largest "black" rectangle starting from
+          --  the (y, x) point. On a vector graphics output, there are
+          --  two advantages:
+          --    - the output is much smaller (for SVG or PDF, the file
+          --        is typically reduced to 1/4 of the "uncompressed" size)
+          --    - many artefacts appearing between "black" modules are
+          --        removed; it is appearent when you zoom a SVG file
+          --        to the max on a Web browser.
+          size_x := 1;
+          size_y := 1;
+          --  Try to extend the square to the right:
+          for xh in x + 1 .. done'Last (2) loop
+            exit when done (y, xh) or not module (y, xh);
+            size_x := size_x + 1;
+          end loop;
+          --  Try to extend the rectangle vertically:
+          Vertical_Extension :
+          for yv in y + 1 .. done'Last (1) loop
+            for xt in x .. x + size_x - 1 loop
+              exit Vertical_Extension when done (yv, xt) or not module (yv, xt);
+            end loop;
+            size_y := size_y + 1;
+          end loop Vertical_Extension;
+          Filled_Rectangle (bc, (x, border_size_y - size_y - y, size_x, size_y));
+          for yt in y .. y + size_y - 1 loop
+            for xt in x .. x + size_x - 1 loop
+              done (yt, xt) := True;
+            end loop;
+          end loop;
+        end if;
+      end loop;
+    end loop;
+  end Output_to_Media;
 
   ----------------------------------------------------
   -- Goodies that can be useful for implementations --
