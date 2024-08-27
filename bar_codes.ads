@@ -75,19 +75,19 @@ package Bar_Codes is
 
   type Box is record left, bottom, width, height : Real; end record;
 
-  -------------------------------------------------------------
-  --  Here is what you need to implement the bar code on     --
-  --  any device. For an example, see the PDF, SVG or PBM    --
-  --  implementations in the package Bar_Codes.Media .        --
-  --                                                         --
-  --  Bar_Code is the main type around bar code generation.  --
-  --  The rendering of the bars is abstracted.               --
-  -------------------------------------------------------------
+  ---------------------------------------------------------------
+  --  Here is what you need to implement the bar code on       --
+  --  any device. For an example, see the PDF, SVG or PBM      --
+  --  implementations in the package `Bar_Codes_Media`.        --
+  --                                                           --
+  --  `Bar_Code` is the main type around bar code generation.  --
+  --  The rendering of the bars is abstracted.                 --
+  ---------------------------------------------------------------
 
   type Bar_Code is abstract tagged private;
 
-  --  Set_Bounding_Box is useful only for a vector graphics implementation
-  --  such as PDF or SVG (see those implementations in Bar_Codes.Media to see why).
+  --  `Set_Bounding_Box` is meaningful only for a vector graphics implementation
+  --  such as PDF or SVG (see those implementations in `Bar_Codes_Media` to see why).
   --
   procedure Set_Bounding_Box (bc : in out Bar_Code; bounding : Box);
 
@@ -104,7 +104,7 @@ package Bar_Codes is
   --
   type Module_Box is record left, bottom, width, height : Natural; end record;
 
-  --  The Fitting function will return the exact box, in terms of modules, needed
+  --  The `Fitting` function will return the exact box, in terms of modules, needed
   --  to fit the bar code for a given text. Fitting.left = Fitting.bottom = 0.
   --  For 1D codes Fitting.height = 1.
   --  This function is helpful to calibrate a raster graphics bitmap.
