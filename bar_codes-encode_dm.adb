@@ -356,49 +356,47 @@ package body Bar_Codes.Encode_DM is
              (width - 4, -1 - height),
              (width - 2,          -2),
                     (-1,          -2));
+        elsif row = 0 and then col = width - 2 and then width rem 4 /= 0 then
+          --  Corner B: omit upper left.
+          draw_it := False;
         else
-          if row = 0 and then col = width - 2 and then width rem 4 /= 0 then
-            --  Corner B: omit upper left.
+          if row not in 0 .. height - 1 or else col not in 0 .. width - 1 then
+            --  We are outside.
+            step := -step;  --  Turn around
+            row := row + 2 + step / 2;
+            col := col + 2 - step / 2;
+
+            while row not in 0 .. height - 1 or else col not in 0 .. width - 1 loop
+              row := row - step;
+              col := col + step;
+            end loop;
+          end if;
+          if row = height - 2 and then col = 0 and then width rem 4 /= 0 then
+            layout :=  --  Corner B layout
+              ((width - 1, 3 - height),
+               (width - 1, 2 - height),
+               (width - 2, 2 - height),
+               (width - 3, 2 - height),
+               (width - 4, 2 - height),
+                       (0,          1),
+                       (0,          0),
+                       (0,         -1));
+
+          elsif row = height - 2 and then col = 0 and then width rem 8 = 4 then
+            layout :=  --  Corner C layout
+              ((width - 1, 5 - height),
+               (width - 1, 4 - height),
+               (width - 1, 3 - height),
+               (width - 1, 2 - height),
+               (width - 2, 2 - height),
+                       (0,          1),
+                       (0,          0),
+                       (0,         -1));
+          elsif row = 1 and then col = width - 1 and then (width rem 8) = 0 and then (height rem 8) = 6 then
+            --  Omit corner D
             draw_it := False;
           else
-            if row not in 0 .. height - 1 or else col not in 0 .. width - 1 then
-              --  We are outside.
-              step := -step;  --  Turn around
-              row := row + 2 + step / 2;
-              col := col + 2 - step / 2;
-
-              while row not in 0 .. height - 1 or else col not in 0 .. width - 1 loop
-                row := row - step;
-                col := col + step;
-              end loop;
-            end if;
-            if row = height - 2 and then col = 0 and then width rem 4 /= 0 then
-              layout :=  --  Corner B layout
-                ((width - 1, 3 - height),
-                 (width - 1, 2 - height),
-                 (width - 2, 2 - height),
-                 (width - 3, 2 - height),
-                 (width - 4, 2 - height),
-                         (0,          1),
-                         (0,          0),
-                         (0,         -1));
-
-            elsif row = height - 2 and then col = 0 and then width rem 8 = 4 then
-              layout :=  --  Corner C layout
-                ((width - 1, 5 - height),
-                 (width - 1, 4 - height),
-                 (width - 1, 3 - height),
-                 (width - 1, 2 - height),
-                 (width - 2, 2 - height),
-                         (0,          1),
-                         (0,          0),
-                         (0,         -1));
-            elsif row = 1 and then col = width - 1 and then (width rem 8) = 0 and then (height rem 8) = 6 then
-              --  Omit corner D
-              draw_it := False;
-            else
-              layout := normal;
-            end if;
+            layout := normal;
           end if;
         end if;
       end Check_Corners;
