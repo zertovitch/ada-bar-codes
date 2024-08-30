@@ -140,7 +140,7 @@ package Bar_Codes is
 
   title     : constant String := "Ada Bar Codes";
   version   : constant String := "003";
-  reference : constant String := "27-Jul-2024";
+  reference : constant String := "30-Aug-2024";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
   --

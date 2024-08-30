@@ -270,7 +270,7 @@ package body Bar_Codes.Encode_DM is
         end loop;
       end loop;
       if verbosity_level > 1 then
-        Put_Line ("DM: byte sequence with ECC:");
+        Put_Line ("DM: byte sequence including ECC:");
         for elem of enc loop
           Put_Line (elem'Image);
         end loop;
@@ -328,12 +328,12 @@ package body Bar_Codes.Encode_DM is
         (-2, -2));
 
       layout : Layout_Type;
-      skip : Boolean;
+      draw_it : Boolean;
       el : Byte;
       x, y : Integer;
-    begin
-      for elem of enc loop
-        skip := False;
+
+      procedure Check_Corners is
+      begin
         if row = height - 3 and then col = -1 then
           --  Corner A layout
           layout :=
@@ -342,10 +342,10 @@ package body Bar_Codes.Encode_DM is
                 (width, 4 - height),
                 (width, 3 - height),
             (width - 1, 3 - height),
-                (3,     2),
-                (2,     2),
-                (1,     2));
-        elsif row = height + 1 and then col = 1 and then width rem 8 = 0 and then height rem 7 = 6 then
+                    (3,          2),
+                    (2,          2),
+                    (1,          2));
+        elsif row = height + 1 and then col = 1 and then width rem 8 = 0 and then height rem 8 = 6 then
           --  Corner D layout
           layout :=
             ((width - 2,     -height),
@@ -354,12 +354,12 @@ package body Bar_Codes.Encode_DM is
              (width - 2, -1 - height),
              (width - 3, -1 - height),
              (width - 4, -1 - height),
-             (width - 2, -2),
-                (-1, -2));
+             (width - 2,          -2),
+                    (-1,          -2));
         else
           if row = 0 and then col = width - 2 and then width rem 4 /= 0 then
             --  Corner B: omit upper left.
-            skip := True;
+            draw_it := False;
           else
             if row < 0 or else col >= width or else row >= height or else col < 0 then
               --  We are outside.
@@ -379,9 +379,9 @@ package body Bar_Codes.Encode_DM is
                  (width - 2, 2 - height),
                  (width - 3, 2 - height),
                  (width - 4, 2 - height),
-                     (0,     1),
-                     (0,     0),
-                     (0,    -1));
+                         (0,          1),
+                         (0,          0),
+                         (0,         -1));
 
             elsif row = height - 2 and then col = 0 and then width rem 8 = 4 then
               layout :=  --  Corner C layout
@@ -390,45 +390,55 @@ package body Bar_Codes.Encode_DM is
                  (width - 1, 3 - height),
                  (width - 1, 2 - height),
                  (width - 2, 2 - height),
-                     (0,     1),
-                     (0,     0),
-                     (0,    -1));
+                         (0,          1),
+                         (0,          0),
+                         (0,         -1));
             elsif row = 1 and then col = width - 1 and then (width rem 8) = 0 and then (height rem 8) = 6 then
               --  Omit corner D
-              skip := True;
+              draw_it := False;
             else
               layout := normal;
             end if;
           end if;
         end if;
+      end Check_Corners;
 
-        if not skip then
-          el := elem;
-          for j in Layout_Type'Range loop
-            if (el and 1) /= 0 then
-              x := col + layout (j).x;
-              y := row + layout (j).y;
+    begin
+      for elem of enc loop
+        loop
+          draw_it := True;
+          Check_Corners;
+          exit when draw_it;
+          --  Diagonal steps (nothing drawn):
+          row := row - step;
+          col := col + step;
+        end loop;
 
-              --  Wrap around:
-              if x < 0 then
-                x := x + width;
-                y := y + 4 - ((width + 4) rem 8);
-              end if;
-              if y < 0 then
-                x := x + 4 - ((height + 4) rem 8);
-                y := y + height;
-              end if;
+        el := elem;
+        for j in Layout_Type'Range loop
+          if (el and 1) /= 0 then
+            x := col + layout (j).x;
+            y := row + layout (j).y;
 
-              --  Plot at (x, y), plus region gap
-              bit (x + 2 * (x / fw) + 1,
-                   y + 2 * (y / fh) + 1);
+            --  Wrap around:
+            if x < 0 then
+              x := x + width;
+              y := y + 4 - ((width + 4) rem 8);
+            end if;
+            if y < 0 then
+              x := x + 4 - ((height + 4) rem 8);
+              y := y + height;
             end if;
 
-            el := el / 2;
-          end loop;
-        end if;
+            --  Plot at (x, y), plus region gap
+            bit (x + 2 * (x / fw) + 1,
+                 y + 2 * (y / fh) + 1);
+          end if;
 
-        --  Diagonal steps:
+          el := el / 2;
+        end loop;
+
+        --  Diagonal steps (byte `elem` was drawn):
         row := row - step;
         col := col + step;
       end loop;
