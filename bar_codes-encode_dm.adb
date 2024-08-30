@@ -277,11 +277,9 @@ package body Bar_Codes.Encode_DM is
       end if;
     end Preparation;
 
-    procedure Layout_Perimeter_Finder_Pattern is
-      i : Integer;
+    procedure Horizontal_Layout_Perimeter_Finder_Pattern is
+      i : Integer := 0;
     begin
-      --  Horizontal
-      i := 0;
       while i < height + 2 * nr loop
         for j in 0 .. width + 2 * nc - 1 loop
           bit (j, i + fh + 1);
@@ -291,9 +289,11 @@ package body Bar_Codes.Encode_DM is
         end loop;
         i := i + fh + 2;
       end loop;
+    end Horizontal_Layout_Perimeter_Finder_Pattern;
 
-      --  Vertical
-      i := 0;
+    procedure Vertical_Layout_Perimeter_Finder_Pattern is
+      i : Integer := 0;
+    begin
       while i < width + 2 * nc loop
         for j in 0 .. height - 1 loop
           bit (i, j + (j / fh) * 2 + 1);
@@ -303,7 +303,7 @@ package body Bar_Codes.Encode_DM is
         end loop;
         i := i + fw + 2;
       end loop;
-    end Layout_Perimeter_Finder_Pattern;
+    end Vertical_Layout_Perimeter_Finder_Pattern;
 
     procedure Draw_Data is
       step : Integer := 2;
@@ -361,13 +361,13 @@ package body Bar_Codes.Encode_DM is
             --  Corner B: omit upper left.
             draw_it := False;
           else
-            if row < 0 or else col >= width or else row >= height or else col < 0 then
+            if row not in 0 .. height - 1 or else col not in 0 .. width - 1 then
               --  We are outside.
               step := -step;  --  Turn around
               row := row + 2 + step / 2;
               col := col + 2 - step / 2;
 
-              while row < 0 or else col >= width or else row >= height or else col < 0 loop
+              while row not in 0 .. height - 1 or else col not in 0 .. width - 1 loop
                 row := row - step;
                 col := col + step;
               end loop;
@@ -453,7 +453,8 @@ package body Bar_Codes.Encode_DM is
 
   begin
     Preparation;
-    Layout_Perimeter_Finder_Pattern;
+    Horizontal_Layout_Perimeter_Finder_Pattern;
+    Vertical_Layout_Perimeter_Finder_Pattern;
     Draw_Data;
     Output_to_Media (bc, border_size_x, border_size_y, module);
   end Draw;

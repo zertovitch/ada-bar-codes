@@ -2,7 +2,9 @@
 --  The big... Ada Bar Codes Demo (ABCD :-) ) !  --
 ---------------------------------------------------
 
-with Ada.Text_IO;
+with Ada.Streams.Stream_IO,
+     Ada.Text_IO;
+
 with Bar_Codes, Bar_Codes_Media;
 
 procedure Bar_Codes_Demo is
@@ -16,9 +18,14 @@ procedure Bar_Codes_Demo is
   --  PBM images demonstrate output as raster graphics. This could be another image
   --       format, or anything else involving pixels, like a screen, a printer, etc.
   --
+  --  PNG images demonstrate output as raster graphics for the ubiquitous PNG format.
+  --
   use Ada.Text_IO;
   svg, pdf, pbm : File_Type;
-  --
+
+  package SIO renames Ada.Streams.Stream_IO;
+  png : SIO.File_Type;
+
   procedure SVG_Header is
   --  NB: the SVG file can be viewed without this header.
   begin
@@ -47,6 +54,10 @@ procedure Bar_Codes_Demo is
     Create (pbm, Out_File, "bar_code_128.pbm");
     Put_Line (pbm, PBM_Bar_Code (Code_128, 2, 100, hello_short));
     Close (pbm);
+    --
+    SIO.Create (png, SIO.Out_File, "bar_code_128.png");
+    PNG_Bar_Code (Code_128, 2, 100, hello_short, SIO.Stream (png).all);
+    SIO.Close (png);
   end Demo_Code_128;
   --
   procedure Demo_QR is
@@ -64,6 +75,10 @@ procedure Bar_Codes_Demo is
     Create (pbm, Out_File, "qr_code_h.pbm");
     Put_Line (pbm, PBM_Bar_Code (Code_QR_High, 5, 5, hello_long));
     Close (pbm);
+    --
+    SIO.Create (png, SIO.Out_File, "qr_code_h.png");
+    PNG_Bar_Code (Code_QR_High, 5, 5, hello_long, SIO.Stream (png).all);
+    SIO.Close (png);
   end Demo_QR;
   --
   procedure Demo_Data_Matrix is
@@ -77,6 +92,10 @@ procedure Bar_Codes_Demo is
     Create (pbm, Out_File, "dm_code_rect.pbm");
     Put_Line (pbm, PBM_Bar_Code (Code_DM_Rectangular, 10, 10, hello_short));
     Close (pbm);
+    --
+    SIO.Create (png, SIO.Out_File, "dm_code_rect.png");
+    PNG_Bar_Code (Code_DM_Rectangular, 10, 10, hello_short, SIO.Stream (png).all);
+    SIO.Close (png);
   end Demo_Data_Matrix;
   --
 begin

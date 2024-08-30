@@ -1,25 +1,36 @@
-----------------------------------------------------------------------------
---  Ready-to-use implementations of the bar code generator:               --
---                                                                        --
---    - PDF_Bar_Code : PDF vector graphics for PDF documents              --
---    - SVG_Bar_Code : SVG vector graphics for Web contents               --
---    - PBM_Bar_Code : PBM bitmap image as an example of raster graphics  --
---                                                                        --
-----------------------------------------------------------------------------
+----------------------------------------------------------------
+--  Ready-to-use implementations of the bar code generator:   --
+--                                                            --
+--    - PDF_Bar_Code : PDF vector graphics for PDF documents  --
+--    - SVG_Bar_Code : SVG vector graphics for Web contents   --
+--    - PBM_Bar_Code : PBM bitmap image (raster graphics)     --
+--    - PNG_Bar_Code : PNG bitmap image (raster graphics)     --
+--                                                            --
+----------------------------------------------------------------
 --
---  NB: vector graphics and raster graphics are fundamentally different
---      regarding the production of bar codes:
+--  Important note
 --
---        -  On vector graphics, lengths are arbitrarily divisible. So it
---           is possible to define a rectangle and let Bar_Codes
---           fill that rectangle with the bar code.
+--  Vector graphics and raster graphics are fundamentally different
+--  regarding the production of bar codes:
 --
---        -  On raster graphics, the bar code generator needs to produce integer
---           amounts of pixels. The only freedom is the scaling (an integer amount
---           as well).
---           See the remark below the function PBM_Bar_Code for more details.
+--  -  On vector graphics, lengths are arbitrarily divisible. So it
+--     is possible to define a rectangle and let Bar_Codes
+--     fill that rectangle with the bar code.
+--
+--  -  On raster graphics, the bar code generator *has* to produce integer
+--     amounts of pixels. The only freedom is the scaling (an integer amount
+--     as well). Furthermore:
+--        - On some screens or other devices, pixels are not
+--            displayed as squares. Sad!
+--        - Modules of certain 2D bar codes (such as QR) are best rendered
+--            squared.
+--        - Consequently, for such 2D bar codes, scale_x = scale_y is not
+--            always, automatically, the appropriate setting.
+--            Check the output media's aspect ratio.
 
 with Bar_Codes;
+
+with Ada.Streams;
 
 package Bar_Codes_Media is
 
@@ -67,10 +78,17 @@ package Bar_Codes_Media is
      text             : String)        --  Text to encode
   return String;
 
-  --  NB:
-  --    - On some screens or other devices, pixels are not square.
-  --    - Modules of certain 2D bar codes (such as QR) are best rendered square.
-  --    - Consequently, for such 2D bar codes, scale_x = scale_y is not
-  --        automatically the appropriate setting. Check the device's aspect ratio.
+  ----------------------------------------------
+  --  Raster Graphics - PNG                   --
+  ----------------------------------------------
+  --  The PNG_Bar_Code procedure produces a   --
+  --  PNG (Portable Network Graphics) image.  --
+  ----------------------------------------------
+
+  procedure PNG_Bar_Code
+    (kind             : in     Bar_Codes.Kind_Of_Code;
+     scale_x, scale_y : in     Positive;      --  Scaling factors for the bitmap rendering
+     text             : in     String;        --  Text to encode
+     output           : in out Ada.Streams.Root_Stream_Type'Class);
 
 end Bar_Codes_Media;

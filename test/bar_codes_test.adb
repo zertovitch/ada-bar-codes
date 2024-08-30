@@ -1,40 +1,41 @@
-with Ada.Characters.Handling;
-with Ada.Numerics.Float_Random;
-with Ada.Text_IO;
+with Ada.Characters.Handling,
+     Ada.Numerics.Float_Random,
+     Ada.Streams.Stream_IO;
 
 with Bar_Codes, Bar_Codes_Media;
 
 procedure Bar_Codes_Test is
-  use Ada.Text_IO, Bar_Codes, Bar_Codes_Media;
   --
-  procedure Spit (kind : Kind_Of_Code; file_name_part, text : String) is
-    use Ada.Characters.Handling;
-    pbm : File_Type;
+  procedure Spit (kind : Bar_Codes.Kind_Of_Code; file_name_part, text : String) is
+    use Bar_Codes, Bar_Codes_Media;
+    use Ada.Characters.Handling, Ada.Streams.Stream_IO;
+    png : File_Type;
     prefix : constant String := "test " & To_Lower (kind'Image) & ' ';
   begin
     if file_name_part = "" then
-      Create (pbm, Out_File, prefix & text & ".pbm");
+      Create (png, Out_File, prefix & text & ".png");
     else
-      Create (pbm, Out_File, prefix & file_name_part & ".pbm");
+      Create (png, Out_File, prefix & file_name_part & ".png");
     end if;
     if Code_2D_Square (kind) then
       --  Square 2D codes need square modules.
-      Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+      PNG_Bar_Code (kind, 2, 2, text, Stream (png).all);
     else
       case kind is
         when Code_1D =>
           --  1D modules are as high as you wish.
-          Put_Line (pbm, PBM_Bar_Code (kind, 2, 30, text));
+          PNG_Bar_Code (kind, 2, 30, text, Stream (png).all);
         when Code_DM_Rectangular =>
-          Put_Line (pbm, PBM_Bar_Code (kind, 2, 2, text));
+          PNG_Bar_Code (kind, 2, 2, text, Stream (png).all);
         when others =>
           pragma Assert (Code_2D_Square (kind));
       end case;
     end if;
-    Close (pbm);
+    Close (png);
   end Spit;
   --
   procedure Test_128 is
+    use Bar_Codes;
     use Ada.Numerics.Float_Random;
     chunks : constant := 2;
     c : Character := ASCII.DEL;
@@ -54,7 +55,7 @@ procedure Bar_Codes_Test is
     end loop;
     Spit (Code_128, "vn1", "0520");
     Spit (Code_128, "vn2", "993512176004535560");
-    Spit (Code_128, "", "12345abc1234abc1234567a123bcdef12345");
+    Spit (Code_128,    "", "12345abc1234abc1234567a123bcdef12345");
     Reset (gen, 1);
     for iter in 1 .. 9 loop
       for i in rnd'Range loop
@@ -114,11 +115,13 @@ procedure Bar_Codes_Test is
       "Short description: GLOBE_3D is a free, open-source," &
       "real-time 3D Engine written in Ada, based on OpenGL.";
   begin
-    for c in Code_2D loop
-      Spit (c, "blabla 1",    blabla (1 .. 1));
-      Spit (c, "blabla 10",   blabla (1 .. 10));
-      Spit (c, "blabla 100",  blabla (1 .. 100));
-      Spit (c, "blabla 500",  blabla (1 .. 500));
+    for c in Bar_Codes.Code_2D loop
+      Spit (c, "blabla 0001", blabla (1 .. 0001));
+      Spit (c, "blabla 0010", blabla (1 .. 0010));
+      Spit (c, "blabla 0035", blabla (1 .. 0035));
+      Spit (c, "blabla 0100", blabla (1 .. 0100));
+      Spit (c, "blabla 0250", blabla (1 .. 0250));
+      Spit (c, "blabla 0500", blabla (1 .. 0500));
       Spit (c, "blabla full", blabla);
     end loop;
   end Test_2D;
