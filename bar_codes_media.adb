@@ -99,9 +99,9 @@ package body Bar_Codes_Media is
       "<!--  End of Bar Code  -->" & ASCII.LF;
   end SVG_Bar_Code;
 
-  ------------------------------------------------------------------------------------------
-  --  Generic drawing of bar codes on a back & white bitmap, for raster graphics outputs  --
-  ------------------------------------------------------------------------------------------
+  -------------------------------------------------------------------------------------------
+  --  Generic drawing of bar codes on a black & white bitmap, for raster graphics outputs  --
+  -------------------------------------------------------------------------------------------
 
   generic
     scale_xx : Positive;
@@ -155,8 +155,8 @@ package body Bar_Codes_Media is
       new Bitmap_BC_Buffer
             (scale_xx => scale_x,
              scale_yy => scale_y,
-             width   => fit.width,
-             height  => fit.height);
+             width    => fit.width,
+             height   => fit.height);
 
     pbm_code : String (1 .. (BC_BMP.bitmap'Length (1) * 2 + 1) * BC_BMP.bitmap'Length (2));
     pbm_i : Positive := 1;
@@ -201,8 +201,8 @@ package body Bar_Codes_Media is
       new Bitmap_BC_Buffer
             (scale_xx => scale_x,
              scale_yy => scale_y,
-             width   => fit.width,
-             height  => fit.height);
+             width    => fit.width,
+             height   => fit.height);
 
     --------------------------------------------------------------
     --  Captive copy of Dumb_PNG, that can be found elsewhere,  --
