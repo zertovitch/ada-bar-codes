@@ -51,7 +51,7 @@ procedure Bar_Codes_Test is
           c := Character'Pred (c);
         end if;
       end loop;
-      Spit (Code_128, "test code 128" & chunk'Image, msg);
+      Spit (Code_128, chunk'Image, msg);
     end loop;
     Spit (Code_128, "vn1", "0520");
     Spit (Code_128, "vn2", "993512176004535560");
