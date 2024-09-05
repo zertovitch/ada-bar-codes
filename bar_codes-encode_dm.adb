@@ -1,7 +1,9 @@
 with Ada.Containers.Vectors;
 with Ada.Text_IO;
 
-package body Bar_Codes.Encode_DM is
+separate (Bar_Codes)
+
+package body Encode_DM is
 
   type Byte is mod 256;
 
@@ -478,4 +480,4 @@ package body Bar_Codes.Encode_DM is
     return (0, 0, xx, yy);
   end Fitting;
 
-end Bar_Codes.Encode_DM;
+end Encode_DM;

@@ -2,7 +2,9 @@ with Ada.Text_IO;
 
 --  Nice to have: find optimal code.
 
-package body Bar_Codes.Encode_Code_128 is
+separate (Bar_Codes)
+
+package body Encode_Code_128 is
 
   --  See bc_work.xls, sheet: Code_128
 
@@ -290,4 +292,4 @@ package body Bar_Codes.Encode_Code_128 is
   function Fitting (text : String) return Module_Box is
   (0, 0, Compose_Code (text)'Length * symbol_width + stop_extra_width, 1);
 
-end Bar_Codes.Encode_Code_128;
+end Encode_Code_128;

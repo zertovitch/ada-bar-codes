@@ -28,7 +28,9 @@
 with Ada.Text_IO;
 with Interfaces;
 
-package body Bar_Codes.Encode_QR is
+separate (Bar_Codes)
+
+package body Encode_QR is
 
   use Ada.Text_IO, Interfaces;
 
@@ -766,4 +768,4 @@ package body Bar_Codes.Encode_QR is
     return (0, 0, border_size, border_size);
   end Fitting;
 
-end Bar_Codes.Encode_QR;
+end Encode_QR;

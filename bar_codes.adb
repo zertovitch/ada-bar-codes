@@ -1,10 +1,27 @@
-with Bar_Codes.Encode_Code_128;
-with Bar_Codes.Encode_DM;
-with Bar_Codes.Encode_QR;
-
 with Ada.Text_IO;
 
 package body Bar_Codes is
+
+  package Encode_Code_128 is
+    procedure Draw (bc : in out Bar_Code; text : String);
+    function Fitting (text : String) return Module_Box;
+  end Encode_Code_128;
+
+  package body Encode_Code_128 is separate;
+
+  package Encode_DM is
+    procedure Draw (bc : in out Bar_Code; text : String; dm_kind : Code_DM);
+    function Fitting (text : String; dm_kind : Code_DM) return Module_Box;
+  end Encode_DM;
+
+  package body Encode_DM is separate;
+
+  package Encode_QR is
+    procedure Draw (bc : in out Bar_Code; text : String; qr_kind : Code_QR);
+    function Fitting (text : String; qr_kind : Code_QR) return Module_Box;
+  end Encode_QR;
+
+  package body Encode_QR is separate;
 
   ------------------------
   --  Bar_Code methods  --
@@ -18,19 +35,19 @@ package body Bar_Codes is
   procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; text : String) is
   begin
     case kind is
-      when Code_128 => Bar_Codes.Encode_Code_128.Draw (bc, text);
-      when Code_DM  => Bar_Codes.Encode_DM.Draw (bc, text, kind);
-      when Code_QR  => Bar_Codes.Encode_QR.Draw (bc, text, kind);
+      when Code_128 => Encode_Code_128.Draw (bc, text);
+      when Code_DM  => Encode_DM.Draw       (bc, text, kind);
+      when Code_QR  => Encode_QR.Draw       (bc, text, kind);
     end case;
   end Draw;
 
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box is
   (case kind is
-     when Code_128 => Bar_Codes.Encode_Code_128.Fitting (text),
-     when Code_DM  => Bar_Codes.Encode_DM.Fitting (text, kind),
-     when Code_QR  => Bar_Codes.Encode_QR.Fitting (text, kind));
+     when Code_128 => Encode_Code_128.Fitting (text),
+     when Code_DM  => Encode_DM.Fitting       (text, kind),
+     when Code_QR  => Encode_QR.Fitting       (text, kind));
 
-  function Get_Module_Width (bc : Bar_Code) return Real is (bc.module_width);
+  function Get_Module_Width  (bc : Bar_Code) return Real is (bc.module_width);
   function Get_Module_Height (bc : Bar_Code) return Real is (bc.module_height);
 
   procedure Output_to_Media
