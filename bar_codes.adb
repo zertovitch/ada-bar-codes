@@ -9,6 +9,13 @@ package body Bar_Codes is
 
   package body Encode_Code_128 is separate;
 
+  package Encode_UPCA_EAN13 is
+    procedure Draw (bc : in out Bar_Code; text : String; kind : Code_UPCA_EAN13);
+    function Fitting return Module_Box;
+  end Encode_UPCA_EAN13;
+
+  package body Encode_UPCA_EAN13 is separate;
+
   package Encode_DM is
     procedure Draw (bc : in out Bar_Code; text : String; dm_kind : Code_DM);
     function Fitting (text : String; dm_kind : Code_DM) return Module_Box;
@@ -35,17 +42,19 @@ package body Bar_Codes is
   procedure Draw (bc : in out Bar_Code; kind : Kind_Of_Code; text : String) is
   begin
     case kind is
-      when Code_128 => Encode_Code_128.Draw (bc, text);
-      when Code_DM  => Encode_DM.Draw       (bc, text, kind);
-      when Code_QR  => Encode_QR.Draw       (bc, text, kind);
+      when Code_128        => Encode_Code_128.Draw   (bc, text);
+      when Code_UPCA_EAN13 => Encode_UPCA_EAN13.Draw (bc, text, kind);
+      when Code_DM         => Encode_DM.Draw         (bc, text, kind);
+      when Code_QR         => Encode_QR.Draw         (bc, text, kind);
     end case;
   end Draw;
 
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box is
   (case kind is
-     when Code_128 => Encode_Code_128.Fitting (text),
-     when Code_DM  => Encode_DM.Fitting       (text, kind),
-     when Code_QR  => Encode_QR.Fitting       (text, kind));
+     when Code_128        => Encode_Code_128.Fitting   (text),
+     when Code_UPCA_EAN13 => Encode_UPCA_EAN13.Fitting,
+     when Code_DM         => Encode_DM.Fitting         (text, kind),
+     when Code_QR         => Encode_QR.Fitting         (text, kind));
 
   function Get_Module_Width  (bc : Bar_Code) return Real is (bc.module_width);
   function Get_Module_Height (bc : Bar_Code) return Real is (bc.module_height);

@@ -30,10 +30,11 @@ Contents
   - ada_bar_codes.gpr       : project file for the AdaCore GNAT compiler
   - ada_bar_codes.prj       : project file for the PTC ObjectAda compiler
   - ada_bar_codes.txt       : this file
-  - bar_codes.ads           : package specification
-  - bar_codes.adb           : package body
-  - bar_codes-encode*       : private children packages (needed but not relevant for users)
-  - bar_codes_media.ad*     : a few simple implementations examples for the SVG, PDF, PBM formats
+  - bar_codes.ads           : Bar_Codes package specification
+  - bar_codes.adb           : Bar_Codes package body
+  - bar_codes-encode*       : separate sub-packages of Bar_Codes
+  - bar_codes_media.ad*     : a few simple implementations examples for
+                                the SVG, PDF, PBM and PNG formats
   - demo/bar_codes_demo.adb : demo procedure
   - test/bar_codes_test.adb : test procedure (produces lots of files!)
 

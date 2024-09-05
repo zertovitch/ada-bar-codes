@@ -5,7 +5,7 @@ with Ada.Characters.Handling,
 with Bar_Codes, Bar_Codes_Media;
 
 procedure Bar_Codes_Test is
-  --
+
   procedure Spit (kind : Bar_Codes.Kind_Of_Code; file_name_part, text : String) is
     use Bar_Codes, Bar_Codes_Media;
     use Ada.Characters.Handling, Ada.Streams.Stream_IO;
@@ -33,7 +33,7 @@ procedure Bar_Codes_Test is
     end if;
     Close (png);
   end Spit;
-  --
+
   procedure Test_128 is
     use Bar_Codes;
     use Ada.Numerics.Float_Random;
@@ -84,7 +84,19 @@ procedure Bar_Codes_Test is
       Spit (Code_128, "rnd digits" & iter'Image, rnd);
     end loop;
   end Test_128;
-  --
+
+  procedure Test_EAN13 is
+  begin
+    for initial_digit in Character range '0' .. '9' loop
+      Spit (Bar_Codes.Code_EAN13, (1 => initial_digit), initial_digit & "12345678901");
+    end loop;
+  end Test_EAN13;
+
+  procedure Test_UPCA is
+  begin
+    Spit (Bar_Codes.Code_UPCA, "", "12345678901");
+  end Test_UPCA;
+
   procedure Test_2D is
     blabla : constant String :=
       "The Corporate Bullshit Generator " &
@@ -127,5 +139,7 @@ procedure Bar_Codes_Test is
   end Test_2D;
 begin
   Test_128;
+  Test_EAN13;
+  Test_UPCA;
   Test_2D;
 end Bar_Codes_Test;

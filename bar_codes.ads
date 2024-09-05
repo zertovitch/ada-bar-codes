@@ -45,6 +45,11 @@ package Bar_Codes is
      --
     (Code_128,
      --
+     --  UPC-A / EAN-13 are 1D bar codes used on labels of retail products.
+     --
+     Code_UPCA,
+     Code_EAN13,
+     --
      --  Data Matrix is a 2D bar code popular for marking small items.
      --  Standard: ISO/IEC 16022:2006
      --
@@ -61,13 +66,14 @@ package Bar_Codes is
 
   --  Classify the bar codes by dimensions (1-dimensional or 2-dimensional):
   --
-  subtype Code_1D is Kind_Of_Code range Kind_Of_Code'First .. Code_128;
+  subtype Code_1D is Kind_Of_Code range Kind_Of_Code'First .. Code_EAN13;
   subtype Code_2D is Kind_Of_Code range Code_DM_Rectangular .. Kind_Of_Code'Last;
 
   --  Classify the bar codes by family (Data Matrix, QR, ...):
   --
   subtype Code_DM is Kind_Of_Code range Code_DM_Rectangular .. Code_DM_Square;
   subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
+  subtype Code_UPCA_EAN13 is Kind_Of_Code range Code_UPCA  .. Code_EAN13;
 
   function Code_2D_Square (kind : Kind_Of_Code) return Boolean is (kind in Code_DM_Square | Code_QR);
 
@@ -139,8 +145,8 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "004";
-  reference : constant String := "31-Aug-2024";
+  version   : constant String := "005, preview 1";
+  reference : constant String := "05-Sep-2024";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
   --

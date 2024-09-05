@@ -34,11 +34,11 @@ procedure Bar_Codes_Demo is
     Put_Line (svg, "  PUBLIC '-//W3C//DTD SVG 1.1//EN'");
     Put_Line (svg, "  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>");
   end SVG_Header;
-  --
+
   prefix : constant String := "Hello from " & Bar_Codes.title;
   hello_short : constant String := prefix & "! How's life?";
   hello_long  : constant String := prefix & " ( " & Bar_Codes.web & " ) ! My number is: 1234567890";
-  --
+
   procedure Demo_Code_128 is
     use Bar_Codes, Bar_Codes_Media;
   begin
@@ -59,7 +59,23 @@ procedure Bar_Codes_Demo is
     PNG_Bar_Code (Code_128, 2, 100, hello_short, SIO.Stream (png).all);
     SIO.Close (png);
   end Demo_Code_128;
-  --
+
+  procedure Demo_Code_UPCA is
+    use Bar_Codes, Bar_Codes_Media;
+  begin
+    SIO.Create (png, SIO.Out_File, "bar_code_upca.png");
+    PNG_Bar_Code (Code_UPCA, 2, 100, "12345678901", SIO.Stream (png).all);
+    SIO.Close (png);
+  end Demo_Code_UPCA;
+
+  procedure Demo_Code_EAN13 is
+    use Bar_Codes, Bar_Codes_Media;
+  begin
+    SIO.Create (png, SIO.Out_File, "bar_code_ean13.png");
+    PNG_Bar_Code (Code_EAN13, 2, 100, "123456789012", SIO.Stream (png).all);
+    SIO.Close (png);
+  end Demo_Code_EAN13;
+
   procedure Demo_QR is
     use Bar_Codes, Bar_Codes_Media;
   begin
@@ -80,7 +96,7 @@ procedure Bar_Codes_Demo is
     PNG_Bar_Code (Code_QR_High, 5, 5, hello_long, SIO.Stream (png).all);
     SIO.Close (png);
   end Demo_QR;
-  --
+
   procedure Demo_Data_Matrix is
     use Bar_Codes, Bar_Codes_Media;
   begin
@@ -97,9 +113,11 @@ procedure Bar_Codes_Demo is
     PNG_Bar_Code (Code_DM_Rectangular, 10, 10, hello_short, SIO.Stream (png).all);
     SIO.Close (png);
   end Demo_Data_Matrix;
-  --
+
 begin
   Demo_Code_128;
+  Demo_Code_UPCA;
+  Demo_Code_EAN13;
   Demo_QR;
   Demo_Data_Matrix;
 end Bar_Codes_Demo;

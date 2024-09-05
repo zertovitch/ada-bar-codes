@@ -63,7 +63,7 @@ package body Encode_Code_128 is
   begin
     for i in text'Range loop
       if text (i) > ASCII.DEL then
-        raise Cannot_Encode;
+        raise Cannot_Encode with "Message must bit 7-bit ASCII";
       end if;
     end loop;
     for i in text'Range loop
@@ -268,10 +268,10 @@ package body Encode_Code_128 is
             height => 1));
     end Bar;
   begin
-    --  For vector graphics only: we need to squeeze the full 2D code
+    --  For vector graphics only: we need to squeeze the full displayed code
     --  into the bounding box. A "module" is the thinnest bar.
     bc.module_width  := bc.bounding.width / Real (code'Length * symbol_width + stop_extra_width);
-    bc.module_height := bc.bounding.height;  --  This is an 1D code, any bar takes the full height
+    bc.module_height := bc.bounding.height;  --  This is a 1D code: any bar takes the full height
     --
     for i in code'Range loop
       x := (i - 1) * symbol_width;
