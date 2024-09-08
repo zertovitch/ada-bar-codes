@@ -113,10 +113,19 @@ package body Encode_UPCA_EAN13 is
     X : Natural := 0;
 
     procedure Draw (Pattern : in String) is
+      done : array (Pattern'Range) of Boolean := (others => False);
+      j, width : Integer;
     begin
-      for C of Pattern loop
-        if C = '1' then
-          Bar (X, 1);
+      for i in Pattern'Range loop
+        if Pattern (i) = '1' and then not done (i) then
+          j := i;
+          for k in i + 1 .. Pattern'Last loop
+            exit when Pattern (k) /= '1';
+            j := k;
+            done (j) := True;
+          end loop;
+          width := j - i + 1;
+          Bar (X, width);
         end if;
         X := X + 1;
       end loop;
