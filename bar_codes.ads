@@ -45,6 +45,10 @@ package Bar_Codes is
      --
     (Code_128,
      --
+     --  MSI 1D bar codes.
+     --
+     Code_MSI,
+     --
      --  UPC-A / EAN-13 are 1D bar codes used on labels of retail products.
      --
      Code_UPCA,
@@ -72,8 +76,8 @@ package Bar_Codes is
   --  Classify the bar codes by family (Data Matrix, QR, ...):
   --
   subtype Code_DM is Kind_Of_Code range Code_DM_Rectangular .. Code_DM_Square;
-  subtype Code_QR is Kind_Of_Code range Code_QR_Low  .. Code_QR_High;
-  subtype Code_UPCA_EAN13 is Kind_Of_Code range Code_UPCA  .. Code_EAN13;
+  subtype Code_QR is Kind_Of_Code range Code_QR_Low .. Code_QR_High;
+  subtype Code_UPCA_EAN13 is Kind_Of_Code range Code_UPCA .. Code_EAN13;
 
   function Code_2D_Square (kind : Kind_Of_Code) return Boolean is (kind in Code_DM_Square | Code_QR);
 

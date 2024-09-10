@@ -6,28 +6,35 @@ package body Bar_Codes is
     procedure Draw (bc : in out Bar_Code; text : String);
     function Fitting (text : String) return Module_Box;
   end Encode_Code_128;
-
+  --
   package body Encode_Code_128 is separate;
+
+  package Encode_MSI is
+    procedure Draw (bc : in out Bar_Code; text : String);
+    function Fitting (text : String) return Module_Box;
+  end Encode_MSI;
+  --
+  package body Encode_MSI is separate;
 
   package Encode_UPCA_EAN13 is
     procedure Draw (bc : in out Bar_Code; text : String; kind : Code_UPCA_EAN13);
     function Fitting return Module_Box;
   end Encode_UPCA_EAN13;
-
+  --
   package body Encode_UPCA_EAN13 is separate;
 
   package Encode_DM is
     procedure Draw (bc : in out Bar_Code; text : String; dm_kind : Code_DM);
     function Fitting (text : String; dm_kind : Code_DM) return Module_Box;
   end Encode_DM;
-
+  --
   package body Encode_DM is separate;
 
   package Encode_QR is
     procedure Draw (bc : in out Bar_Code; text : String; qr_kind : Code_QR);
     function Fitting (text : String; qr_kind : Code_QR) return Module_Box;
   end Encode_QR;
-
+  --
   package body Encode_QR is separate;
 
   ------------------------
@@ -43,6 +50,7 @@ package body Bar_Codes is
   begin
     case kind is
       when Code_128        => Encode_Code_128.Draw   (bc, text);
+      when Code_MSI        => Encode_MSI.Draw        (bc, text);
       when Code_UPCA_EAN13 => Encode_UPCA_EAN13.Draw (bc, text, kind);
       when Code_DM         => Encode_DM.Draw         (bc, text, kind);
       when Code_QR         => Encode_QR.Draw         (bc, text, kind);
@@ -52,6 +60,7 @@ package body Bar_Codes is
   function Fitting (kind : Kind_Of_Code; text : String) return Module_Box is
   (case kind is
      when Code_128        => Encode_Code_128.Fitting   (text),
+     when Code_MSI        => Encode_MSI.Fitting        (text),
      when Code_UPCA_EAN13 => Encode_UPCA_EAN13.Fitting,
      when Code_DM         => Encode_DM.Fitting         (text, kind),
      when Code_QR         => Encode_QR.Fitting         (text, kind));

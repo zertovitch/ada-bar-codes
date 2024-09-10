@@ -85,6 +85,14 @@ procedure Bar_Codes_Test is
     end loop;
   end Test_128;
 
+  procedure Test_MSI is
+  begin
+    Spit (Bar_Codes.Code_MSI, "", "12345678901");
+    Spit (Bar_Codes.Code_MSI, "", "998877665544332211");
+    Spit (Bar_Codes.Code_MSI, "", "97531");
+    Spit (Bar_Codes.Code_MSI, "", "24680");
+  end Test_MSI;
+
   procedure Test_EAN13 is
   begin
     for initial_digit in Character range '0' .. '9' loop
@@ -139,6 +147,7 @@ procedure Bar_Codes_Test is
   end Test_2D;
 begin
   Test_128;
+  Test_MSI;
   Test_EAN13;
   Test_UPCA;
   Test_2D;

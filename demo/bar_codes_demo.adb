@@ -60,21 +60,29 @@ procedure Bar_Codes_Demo is
     SIO.Close (png);
   end Demo_Code_128;
 
-  procedure Demo_Code_UPCA is
+  procedure Demo_MSI is
+    use Bar_Codes, Bar_Codes_Media;
+  begin
+    SIO.Create (png, SIO.Out_File, "bar_code_msi.png");
+    PNG_Bar_Code (Code_MSI, 2, 100, "12345678901", SIO.Stream (png).all);
+    SIO.Close (png);
+  end Demo_MSI;
+
+  procedure Demo_UPCA is
     use Bar_Codes, Bar_Codes_Media;
   begin
     SIO.Create (png, SIO.Out_File, "bar_code_upca.png");
     PNG_Bar_Code (Code_UPCA, 2, 100, "12345678901", SIO.Stream (png).all);
     SIO.Close (png);
-  end Demo_Code_UPCA;
+  end Demo_UPCA;
 
-  procedure Demo_Code_EAN13 is
+  procedure Demo_EAN13 is
     use Bar_Codes, Bar_Codes_Media;
   begin
     SIO.Create (png, SIO.Out_File, "bar_code_ean13.png");
     PNG_Bar_Code (Code_EAN13, 2, 100, "123456789012", SIO.Stream (png).all);
     SIO.Close (png);
-  end Demo_Code_EAN13;
+  end Demo_EAN13;
 
   procedure Demo_QR is
     use Bar_Codes, Bar_Codes_Media;
@@ -116,8 +124,9 @@ procedure Bar_Codes_Demo is
 
 begin
   Demo_Code_128;
-  Demo_Code_UPCA;
-  Demo_Code_EAN13;
+  Demo_MSI;
+  Demo_UPCA;
+  Demo_EAN13;
   Demo_QR;
   Demo_Data_Matrix;
 end Bar_Codes_Demo;
