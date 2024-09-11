@@ -15,24 +15,26 @@ package body Encode_MSI is
   subtype Digit is Character range '0' .. '9';
   function D2N (D : Digit) return Natural is (Character'Pos (D) - Character'Pos ('0'));
 
-  function Luhn_Checksum (Input : String) return Digit_Value is
-    Sum           : Natural := 0;
-    D             : Natural;
-    reverse_index : Integer := Input'Last;
+  function Luhn_Check_Digit (input : String) return Digit_Value is
+    --  Compute the extra digit x such that the Luhn checksum is 0.
+    sum           : Natural := 0;
+    d, x          : Natural;
+    reverse_index : Integer := input'Last;
   begin
-    for I in Input'Range loop
-      D := D2N (Input (reverse_index));
+    for i in input'Range loop
+      d := D2N (input (reverse_index));
       reverse_index := reverse_index - 1;
-      if I rem 2 = 1 then
-        D := 2 * D;
-        if D > 9 then
-          D := D - 9;
+      if (i - input'First + 1) rem 2 = 1 then
+        d := 2 * d;
+        if d > 9 then
+          d := d - 9;
         end if;
       end if;
-      Sum := Sum + D;
+      sum := sum + d;
     end loop;
-    return (9 * Sum) rem 10;
-  end Luhn_Checksum;
+    x := 9 * sum;  --  We want (x + sum) to be congruent to 0, modulo 10.
+    return x rem 10;
+  end Luhn_Check_Digit;
 
   Symbol_Width : constant := 12;  --  Each digit has 4 bits of 3 bars
   Start_Width  : constant :=  3;  --  Start symbol is a 1 bit
@@ -42,7 +44,7 @@ package body Encode_MSI is
     (for all C of text => C in Digit);
 
   function Code_Modules_Width (text : String) return Positive is
-    (Symbol_Width * (text'Length + 1) + Start_Width + Stop_Width);  --  +1 for Luhn checksum digit
+    (Symbol_Width * (text'Length + 1) + Start_Width + Stop_Width);  --  +1 for Luhn check digit
 
   procedure Draw (bc : in out Bar_Code; text : String) is
 
@@ -91,7 +93,7 @@ package body Encode_MSI is
       digit_bits := Map (D2N (text (I)));
       Draw_Nibble (digit_bits);
     end loop;
-    Draw_Nibble (Map (Luhn_Checksum (text)));
+    Draw_Nibble (Map (Luhn_Check_Digit (text)));
     Draw_Bit (0);  --  Stop code
     Draw_Bit (0);
   end Draw;
