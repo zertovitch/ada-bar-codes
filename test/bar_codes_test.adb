@@ -87,6 +87,8 @@ procedure Bar_Codes_Test is
 
   procedure Test_MSI is
   begin
+    Spit (Bar_Codes.Code_MSI, "", "1234567890");
+    Spit (Bar_Codes.Code_MSI, "", "1234576890");
     Spit (Bar_Codes.Code_MSI, "", "12345678901");
     Spit (Bar_Codes.Code_MSI, "", "998877665544332211");
     Spit (Bar_Codes.Code_MSI, "", "97531");
