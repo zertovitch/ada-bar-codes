@@ -58,17 +58,14 @@ package body Encode_Code_128 is
       end if;
     end Switch_to;
     --
-    four_digits : Boolean;
-    digit_buffer, digit : Natural;
+    digit_buffer : Code_Range;
+    digit        : Integer range 0 .. 9;
   begin
-    for i in text'Range loop
-      if text (i) > ASCII.DEL then
-        raise Cannot_Encode with "Message must bit 7-bit ASCII";
-      end if;
-    end loop;
     for i in text'Range loop
       --  Choice of a subcode
       case text (i) is
+        when Character'Val (128) .. Character'Last =>
+          raise Cannot_Encode with "Message must bit 7-bit ASCII";
         when ASCII.NUL .. ASCII.US =>
           if subcode /= A then
             Switch_to (A);
@@ -87,14 +84,8 @@ package body Encode_Code_128 is
               end if;
             end if;
           else
-            if i + 3 <= text'Last then
-              four_digits := True;
-              for j in i + 1 .. i + 3 loop
-                four_digits := four_digits and text (j) in '0' .. '9';
-              end loop;
-              if four_digits then
+            if i + 3 <= text'Last and then (for all j in i + 1 .. i + 3 => text (j) in '0' .. '9') then
                 Switch_to (C);
-              end if;
             end if;
             if subcode = undefined then
               Switch_to (B);
@@ -256,13 +247,13 @@ package body Encode_Code_128 is
         105 => (2, 1, 1, 2, 3),
         106 => (2, 3, 3, 1, 1)
       );
-    x : Natural;
+    x : Natural := 0;
     --
-    procedure Bar (offset, width : Natural) is
+    procedure Bar (width : Natural) is
     begin
       Filled_Rectangle
         (Bar_Code'Class (bc),  --  Will use the concrete child method for displaying a rectangle
-           (left   => x + offset,
+           (left   => x,
             bottom => 0,
             width  => width,
             height => 1));
@@ -274,19 +265,21 @@ package body Encode_Code_128 is
     bc.module_height := bc.bounding.height;  --  This is a 1D code: any bar takes the full height
     --
     for i in code'Range loop
-      x := (i - 1) * symbol_width;
       declare
-        ws : constant Width_Sequence := widths (code (i));
+        ws : Width_Sequence renames widths (code (i));
       begin
-        Bar (0,                                 ws (1));
-        Bar (ws (1) + ws (2),                   ws (3));
-        Bar (ws (1) + ws (2) + ws (3) + ws (4), ws (5));
+        Bar (ws (1));
+        x := x + ws (1) + ws (2);
+        Bar (ws (3));
+        x := x + ws (3) + ws (4);
+        Bar (ws (5));
+        --  x := x + ws (5) + implicit ws (6).
+        x := (i - code'First + 1) * symbol_width;
       end;
     end loop;
     --  Extra bar after the Stop symbol; this gives the Reverse Stop symbol
     --  when the bar code is scanned turned 180 degrees.
-    x := code'Length * symbol_width;
-    Bar (0, 2);
+    Bar (stop_extra_width);
   end Draw;
 
   function Fitting (text : String) return Module_Box is
