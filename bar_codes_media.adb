@@ -483,22 +483,63 @@ package body Bar_Codes_Media is
 
     end Dumb_PNG;
 
-    rgb_code : Dumb_PNG.Byte_Array (1 .. BC_BMP.bitmap'Length (1) * BC_BMP.bitmap'Length (2) * 3);
+    --  White space margin around the bar code
+    margin : constant Positive := Integer'Min (scale_x, scale_y);
+
+    rgb_code :
+      Dumb_PNG.Byte_Array
+        (1 ..
+         (BC_BMP.bitmap'Length (1) + 2 * margin) *
+         (BC_BMP.bitmap'Length (2) + 2 * margin) * 3);
+
     rgb_i : Positive := 1;
     --
     bc : BC_BMP.Bitmap_BC;
     use Interfaces;
-  begin
-    bc.Draw (kind, text);
-    for y in reverse BC_BMP.bitmap'Range (2) loop
-      for x in BC_BMP.bitmap'Range (1) loop
+    value : Unsigned_8;
+
+    procedure White_Pixels (number : Positive) is
+    begin
+      for i in 1 .. number loop
         for channel in 1 .. 3 loop
-          rgb_code (rgb_i) := 255 - 255 * Unsigned_8 (BC_BMP.bitmap (x, y));
+          rgb_code (rgb_i) := 255;
           rgb_i := rgb_i + 1;
         end loop;
       end loop;
+    end White_Pixels;
+
+    procedure Horizontal_Margin is
+    begin
+      White_Pixels (margin * (BC_BMP.bitmap'Length (1) + 2 * margin));
+    end Horizontal_Margin;
+
+  begin
+    bc.Draw (kind, text);
+    --  Top margin
+    Horizontal_Margin;
+    for y in reverse BC_BMP.bitmap'Range (2) loop
+      --  Left margin
+      White_Pixels (margin);
+      for x in BC_BMP.bitmap'Range (1) loop
+        value := 255 - 255 * Unsigned_8 (BC_BMP.bitmap (x, y));
+        for channel in 1 .. 3 loop
+          rgb_code (rgb_i) := value;
+          rgb_i := rgb_i + 1;
+        end loop;
+      end loop;
+      --  Right margin
+      White_Pixels (margin);
     end loop;
-    Dumb_PNG.Write (rgb_code, Dumb_PNG.packed, BC_BMP.bitmap'Length (1), BC_BMP.bitmap'Length (2), output);
+    --  Bottom margin
+    Horizontal_Margin;
+
+    Dumb_PNG.Write
+      (rgb_code,
+       Dumb_PNG.packed,
+       BC_BMP.bitmap'Length (1) + 2 * margin,
+       BC_BMP.bitmap'Length (2) + 2 * margin,
+       output);
+
   end PNG_Bar_Code;
 
 end Bar_Codes_Media;
