@@ -499,12 +499,11 @@ package body Bar_Codes_Media is
     value : Unsigned_8;
 
     procedure White_Pixels (number : Positive) is
+      channels : constant := 3;
     begin
-      for i in 1 .. number loop
-        for channel in 1 .. 3 loop
-          rgb_code (rgb_i) := 255;
-          rgb_i := rgb_i + 1;
-        end loop;
+      for i in 1 .. number * channels loop
+        rgb_code (rgb_i) := 255;
+        rgb_i := rgb_i + 1;
       end loop;
     end White_Pixels;
 
