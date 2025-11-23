@@ -25,17 +25,19 @@ project Ada_Bar_Codes is
 
    Library_Version := External ("ABC_Library_Version", "libada_bar_codes.so.1");
 
-   for Create_Missing_Dirs use "True";  --  Flips by default the "-p" switch
+   for Create_Missing_Dirs use "True";  --  Flips the "-p" switch
 
    case ABC_Build_Mode is
       when "Debug" | "Fast" =>
          for Source_Dirs use
-           (".",      --  Library: Bar_Codes[.*]
-            "demo",   --  Demos
-            "test");  --  Tests
+           (".",       --  Library: Bar_Codes[.*]
+            "demo",    --  Demos
+            "test",    --  Tests
+            "tools");  --  Tools
          for Main use
            ("bar_codes_demo.adb",   --  Main demo
-            "bar_codes_test.adb");  --  Tests
+            "bar_codes_test.adb",   --  Tests
+            "bc_gen.adb");          --  Tools
          for Exec_Dir use ".";
          for Object_Dir use "obj/" & ABC_Build_Mode;
       when "dynamic" | "relocatable" =>

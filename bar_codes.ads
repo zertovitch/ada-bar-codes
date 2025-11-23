@@ -10,7 +10,7 @@
 
 --  Legal licensing note:
 
---   Copyright (c) 2018 .. 2024 Gautier de Montmollin
+--   Copyright (c) 2018 .. 2025 Gautier de Montmollin
 
 --   Permission is hereby granted, free of charge, to any person obtaining a copy
 --   of this software and associated documentation files (the "Software"), to deal
@@ -149,8 +149,8 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "005";
-  reference : constant String := "14-Sep-2024";
+  version   : constant String := "006, preview 1";
+  reference : constant String := "23-Nov-2025";
   web       : constant String := "http://ada-bar-codes.sf.net/";
   --  Hopefully the latest version is at that URL ^
   --
