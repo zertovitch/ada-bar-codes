@@ -18,8 +18,8 @@
 --     fill that rectangle with the bar code.
 --
 --  -  On raster graphics, the bar code generator *has* to produce integer
---     amounts of pixels. The only freedom is the scaling (an integer amount
---     as well). Furthermore:
+--     amounts of pixels. The only freedom is the scaling, by an integer amount
+--     as well. Furthermore:
 --        - On some screens or other devices, pixels are not
 --            displayed as squares. Sad!
 --        - Modules of certain 2D bar codes (such as QR) are best rendered
@@ -58,10 +58,10 @@ package Bar_Codes_Media is
   -----------------------------------------------------------------------------------
 
   function SVG_Bar_Code
-    (kind          : Bar_Codes.Kind_Of_Code;
-     width, height : Bar_Codes.Real;  --  Dimensions of the SVG bar code image
-     unit          : String;          --  Length unit, for instance "mm" for millimeter
-     text          : String)          --  Text to encode
+    (kind     : Bar_Codes.Kind_Of_Code;
+     bounding : Bar_Codes.Box;  --  Box in the SVG plane, containing the bar code
+     unit     : String;         --  Length unit, for instance "mm" for millimeter
+     text     : String)         --  Text to encode
   return String;
 
   -------------------------------------------------------------------------------

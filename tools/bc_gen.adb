@@ -139,8 +139,10 @@ begin
           (txt_out,
            Bar_Codes_Media.SVG_Bar_Code
              (kind,
-              57.0,
-              (if kind in Code_1D then 23.0 else 57.0),
+              (3.0,
+               3.0,
+               57.0,
+               (if kind in Code_1D then 23.0 else 57.0)),
               "mm",
               To_String (text)));
         TIO.Close (txt_out);

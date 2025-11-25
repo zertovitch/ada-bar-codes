@@ -44,7 +44,7 @@ procedure Bar_Codes_Demo is
   begin
     Create (svg, Out_File, "bar_code_128.svg");
     SVG_Header;
-    Put_Line (svg, SVG_Bar_Code (Code_128, 57.0, 23.0, "mm", hello_short));
+    Put_Line (svg, SVG_Bar_Code (Code_128, (0.0, 0.0, 57.0, 23.0), "mm", hello_short));
     Close (svg);
     --
     Create (pdf, Out_File, "bar_code_128_pdf.txt");
@@ -89,7 +89,7 @@ procedure Bar_Codes_Demo is
   begin
     Create (svg, Out_File, "qr_code_l.svg");
     SVG_Header;
-    Put_Line (svg, SVG_Bar_Code (Code_QR_Low, 60.0, 60.0, "mm", hello_long));
+    Put_Line (svg, SVG_Bar_Code (Code_QR_Low, (3.0, 3.0, 60.0, 60.0), "mm", hello_long));
     Close (svg);
     --
     Create (pdf, Out_File, "qr_code_q_pdf.txt");
@@ -110,7 +110,7 @@ procedure Bar_Codes_Demo is
   begin
     Create (svg, Out_File, "dm_code.svg");
     SVG_Header;
-    Put_Line (svg, SVG_Bar_Code (Code_DM_Square, 80.0, 80.0, "mm", hello_long));
+    Put_Line (svg, SVG_Bar_Code (Code_DM_Square, (3.0, 3.0, 80.0, 80.0), "mm", hello_long));
     Close (svg);
     --
     Create (pbm, Out_File, "dm_code_rect.pbm");

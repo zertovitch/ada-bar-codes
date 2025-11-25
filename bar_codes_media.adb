@@ -56,10 +56,10 @@ package body Bar_Codes_Media is
   --------------------
 
   function SVG_Bar_Code
-    (kind          : Bar_Codes.Kind_Of_Code;
-     width, height : Bar_Codes.Real;  --  Dimensions of the SVG bar code image
-     unit          : String;          --  Length unit, for instance "mm" for millimeter
-     text          : String)          --  Text to encode
+    (kind     : Bar_Codes.Kind_Of_Code;
+     bounding : Bar_Codes.Box;  --  Box in the SVG plane, containing the bar code
+     unit     : String;         --  Length unit, for instance "mm" for millimeter
+     text     : String)         --  Text to encode
   return String
   is
     use Ada.Strings.Unbounded, Bar_Codes;
@@ -71,15 +71,15 @@ package body Bar_Codes_Media is
     begin
       svg_code := svg_code &
         "    <rect style=""fill:#000000;""" &
-        " x="""      & Img (bc.Get_Module_Width  * Real (shape.left))   & unit & """" &
-        " y="""      & Img (height - bc.Get_Module_Height * Real (shape.bottom + shape.height)) & unit & """" &
+        " x="""      & Img (bounding.left + bc.Get_Module_Width  * Real (shape.left))   & unit & """" &
+        " y="""      & Img (bounding.bottom + bounding.height - bc.Get_Module_Height * Real (shape.bottom + shape.height)) & unit & """" &
         " width="""  & Img (bc.Get_Module_Width  * Real (shape.width))  & unit & """" &
         " height=""" & Img (bc.Get_Module_Height * Real (shape.height)) & unit & """/>" & ASCII.LF;
     end Filled_Rectangle;
     --
     bc : SVG_BC;
   begin
-    bc.Set_Bounding_Box ((0.0, 0.0, width, height));
+    bc.Set_Bounding_Box (bounding);
     bc.Draw (kind, text);
     return
       "<!--  Begin of Bar Code  -->" & ASCII.LF &
@@ -89,8 +89,8 @@ package body Bar_Codes_Media is
       "<!--      Web: " & Bar_Codes.web & "  -->" & ASCII.LF &
       "<!--      Requested bar code format: " & kind'Image & "  -->" & ASCII.LF &
       "<!--      Text to be encoded: [" & Make_Printable (text) & "]  -->" & ASCII.LF &
-      "<svg height=""" & Img (height) & unit &
-        """ width=""" & Img (width) & unit &
+      "<svg height=""" & Img (bounding.bottom + bounding.height) & unit &
+        """ width=""" & Img (bounding.left + bounding.width) & unit &
         """ version=""1.1"" xmlns=""http://www.w3.org/2000/svg"">" & ASCII.LF &
       --  White rectangle as background
       "    <rect height=""100%"" width=""100%"" style=""fill:#FFFFFF""/>" & ASCII.LF &
