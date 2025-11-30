@@ -17,8 +17,9 @@ procedure BC_Gen is
   procedure Blurb is
   begin
     Put_Line (Current_Error, "BC_Gen * Generate bar codes from the command line");
-    Put_Line (Current_Error, "Using " &
-      Bar_Codes.title & ' ' & Bar_Codes.version & " dated " & Bar_Codes.reference);
+    Put_Line
+      (Current_Error,
+       "Using " & Bar_Codes.title & ' ' & Bar_Codes.version & " dated " & Bar_Codes.reference);
     Put_Line (Current_Error, "URL: " & Bar_Codes.web);
     New_Line (Current_Error);
     Put_Line (Current_Error, "Syntax:");
@@ -49,11 +50,11 @@ procedure BC_Gen is
 
   format : Format_Type := PNG;
 
-  text : Unbounded_String := Null_Unbounded_String;
-  file_name : Unbounded_String := Null_Unbounded_String;
+  text, file_name : Unbounded_String := Null_Unbounded_String;
 
   function Final_File_Name return String is
   (if file_name = Null_Unbounded_String then
+     --  Default name:
      (case format is
         when PNG => "output.png",
         when SVG => "output.svg")
@@ -123,29 +124,33 @@ begin
     Blurb;
   else
     case format is
+
       when PNG =>
         SIO.Create (stm_out, SIO.Out_File, Final_File_Name);
         Bar_Codes_Media.PNG_Bar_Code
-          (kind,
-           5,
-           (if kind in Code_1D then 100 else 5),
-           To_String (text),
-           SIO.Stream (stm_out).all);
+          (kind    => kind,
+           scale_x => 5,
+           scale_y => (if kind in Code_1D then 100 else 5),
+           text    => To_String (text),
+           output  => SIO.Stream (stm_out).all);
         SIO.Close (stm_out);
+
       when SVG =>
         TIO.Create (txt_out, TIO.Out_File, Final_File_Name);
         SVG_Header;
         TIO.Put_Line
           (txt_out,
            Bar_Codes_Media.SVG_Bar_Code
-             (kind,
-              (3.0,
-               3.0,
-               57.0,
-               (if kind in Code_1D then 23.0 else 57.0)),
-              "mm",
-              To_String (text)));
+             (kind     => kind,
+              bounding =>
+                (3.0,
+                 3.0,
+                 57.0,
+                 (if kind in Code_1D then 23.0 else 57.0)),
+              unit => "mm",
+              text => To_String (text)));
         TIO.Close (txt_out);
+
     end case;
   end if;
 end BC_Gen;
