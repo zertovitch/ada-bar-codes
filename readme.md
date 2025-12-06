@@ -22,4 +22,4 @@ The creation of a bar code is as simple as this small procedure:
     end;
 ```
 
-**Full description in: `ada_bar_codes.txt`
+**Full description in: `ada_bar_codes.txt`**
