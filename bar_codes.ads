@@ -149,12 +149,13 @@ package Bar_Codes is
   ----------------------------------------------------------------
 
   title     : constant String := "Ada Bar Codes";
-  version   : constant String := "006, preview 2";
-  reference : constant String := "30-Nov-2025";
+  version   : constant String := "006";
+  reference : constant String := "06-Dec-2025";
+  --  Hopefully the latest version is reachable at one of those URLs:
   web       : constant String := "http://ada-bar-codes.sf.net/";
-  --  Hopefully the latest version is at that URL ^
-  --
-  --  There is a mirror too @ https://github.com/zertovitch/ada-bar-codes
+  web2      : constant String := "https://sourceforge.net/projects/ada-bar-codes/";
+  web3      : constant String := "https://github.com/zertovitch/ada-bar-codescra";
+  web4      : constant String := "https://alire.ada.dev/crates/bar_codes";
 
 private
 
